@@ -10,6 +10,12 @@ namespace OpenIIoT.Packager
     {
         private static void Main(string[] args)
         {
+            Options options = Options.Parse(args);
+
+            Console.WriteLine("Action: " + options.Action);
+            Console.WriteLine("PayloadDirectory: " + options.PayloadDirectory);
+            Console.WriteLine("ManifestFile: " + options.ManifestFile);
+            Console.WriteLine("PrivateKeyFile: " + options.PrivateKeyFile);
         }
     }
 }
