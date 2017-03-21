@@ -10,7 +10,7 @@ namespace OpenIIoT.Packager
     {
         private static void Main(string[] args)
         {
-            Options options = Options.Parse(args);
+            CommandLineOptions options = CommandLineOptions.Parse(args);
 
             Console.WriteLine("Action: " + options.Action);
             Console.WriteLine("PayloadDirectory: " + options.PayloadDirectory);
