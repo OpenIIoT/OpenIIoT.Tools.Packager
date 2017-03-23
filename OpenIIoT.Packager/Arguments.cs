@@ -1,24 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace OpenIIoT.Packager
+namespace CommandLine
 {
-    public class CommandLineArguments
+    public class ArgumentAttribute : Attribute
     {
-        public string Arguments { get; private set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public bool Required { get; set; }
 
-        public CommandLineArguments(string arguments)
+        public ArgumentAttribute(string name, string description, bool required = false)
         {
-            Arguments = arguments;
+            Name = name;
+            Description = description;
+            Required = required;
+        }
+    }
+
+    public class Arguments
+    {
+        public string FullString { get; private set; }
+
+        public Arguments(string fullString)
+        {
+            FullString = fullString;
         }
 
-        public void ParseInto(Type type)
+        public void Parse()
         {
+            Type type = new StackFrame(1).GetMethod().DeclaringType;
+
             Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>();
 
             foreach (PropertyInfo property in type.GetProperties(BindingFlags.NonPublic | BindingFlags.Static))
@@ -37,7 +54,7 @@ namespace OpenIIoT.Packager
 
             string regEx = "(?:[-]{1,2}|\\/)([\\w-]+)[=|:]?(\\w\\S*|\\\".*\\\"|\\\'.*\\\')?";
 
-            foreach (Match match in Regex.Matches(Arguments, regEx))
+            foreach (Match match in Regex.Matches(FullString, regEx))
             {
                 // ensure the match contains three tuples
                 if (match.Groups.Count == 3)

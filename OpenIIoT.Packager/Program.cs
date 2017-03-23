@@ -6,24 +6,21 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using CommandLine;
 
 namespace OpenIIoT.Packager
 {
-    internal class Options
-    {
-    }
-
     internal class Program
     {
-        [DisplayName("generate-manifest")]
+        [Argument("generate-manifest", "When specified, generates a blank manifest file.", false)]
         private static string GenerateManifest { get; set; }
 
-        [DisplayName("five")]
+        [Argument("five", "five")]
         private static int Five { get; set; }
 
         private static void Main(string[] args)
         {
-            new CommandLineArguments(Environment.CommandLine).ParseInto(typeof(Program));
+            new Arguments(Environment.CommandLine).Parse();
 
             Console.WriteLine("GenerateManifest: " + GenerateManifest);
             Console.WriteLine("Five: " + Five);
