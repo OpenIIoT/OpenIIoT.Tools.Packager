@@ -25,22 +25,55 @@ namespace CommandLine
 
     public class Arguments
     {
-        public string FullString { get; private set; }
+        private const string regEx = "(?:[-]{1,2}|\\/)([\\w-]+)[=|:| ]?(\\w\\S*|\\\".*\\\"|\\\'.*\\\')?";
 
-        public Arguments(string fullString)
+        public static Dictionary<string, string> Parse(string arguments = "")
         {
-            FullString = fullString;
+            Dictionary<string, string> argumentDictionary = new Dictionary<string, string>();
+
+            arguments = arguments.Equals(string.Empty) ? Environment.CommandLine : arguments;
+
+            foreach (Match match in Regex.Matches(arguments, regEx))
+            {
+                if (match.Groups.Count == 3)
+                {
+                    if (!argumentDictionary.ContainsKey(match.Groups[1].Value))
+                    {
+                        argumentDictionary.Add(match.Groups[1].Value, match.Groups[2].Value);
+                    }
+                }
+            }
+
+            return argumentDictionary;
         }
 
-        public void Parse()
+        public static void Populate()
         {
             Type type = new StackFrame(1).GetMethod().DeclaringType;
 
+            Dictionary<string, PropertyInfo> properties = GetArgumentProperties(type, typeof(ArgumentAttribute));
+            Dictionary<string, string> argumentDictionary = Parse();
+
+            foreach (string key in argumentDictionary.Keys)
+            {
+                if (properties.ContainsKey(key))
+                {
+                    PropertyInfo property = properties[key];
+
+                    object convertedValue = Convert.ChangeType(argumentDictionary[key], property.PropertyType);
+
+                    property.SetValue(null, convertedValue);
+                }
+            }
+        }
+
+        private static Dictionary<string, PropertyInfo> GetArgumentProperties(Type type, Type attributeType)
+        {
             Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>();
 
             foreach (PropertyInfo property in type.GetProperties(BindingFlags.NonPublic | BindingFlags.Static))
             {
-                CustomAttributeData attribute = property.CustomAttributes.Where(a => a.AttributeType.Name == "DisplayNameAttribute").FirstOrDefault();
+                CustomAttributeData attribute = property.CustomAttributes.Where(a => a.AttributeType.Name == attributeType.Name).FirstOrDefault();
 
                 if (attribute != default(CustomAttributeData))
                 {
@@ -52,22 +85,7 @@ namespace CommandLine
                 }
             }
 
-            string regEx = "(?:[-]{1,2}|\\/)([\\w-]+)[=|:]?(\\w\\S*|\\\".*\\\"|\\\'.*\\\')?";
-
-            foreach (Match match in Regex.Matches(FullString, regEx))
-            {
-                // ensure the match contains three tuples
-                if (match.Groups.Count == 3)
-                {
-                    if (properties.ContainsKey(match.Groups[1].Value))
-                    {
-                        PropertyInfo property = properties[match.Groups[1].Value];
-                        object converted = Convert.ChangeType(match.Groups[2].Value, property.PropertyType);
-
-                        property.SetValue(null, converted);
-                    }
-                }
-            }
+            return properties;
         }
     }
 }
