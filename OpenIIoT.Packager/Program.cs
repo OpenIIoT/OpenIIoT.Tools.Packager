@@ -12,11 +12,14 @@ namespace OpenIIoT.Packager
 {
     internal class Program
     {
-        [Argument("generate-manifest", "When specified, generates a blank manifest file.")]
+        [Argument("generate-manifest")]
         private static string GenerateManifest { get; set; }
 
-        [Argument("five", "five")]
+        [Argument("five")]
         private static int Five { get; set; }
+
+        [Argument("true")]
+        private static bool TrueOrFalse { get; set; }
 
         private static void Main(string[] args)
         {
@@ -31,6 +34,7 @@ namespace OpenIIoT.Packager
 
             Console.WriteLine("GenerateManifest: " + GenerateManifest);
             Console.WriteLine("Five: " + Five);
+            Console.WriteLine("True Or False: " + TrueOrFalse);
 
             Console.ReadLine();
         }
