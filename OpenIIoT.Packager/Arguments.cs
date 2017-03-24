@@ -1,9 +1,58 @@
-﻿using System;
+﻿/*
+      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀  ▀  ▀      ▀▀
+      █
+      █   ▄████████                                                               ▄█                                  ▄████████
+      █   ███    ███                                                             ███                                  ███    ███
+      █   ███    █▀   ██████     ▄▄██▄▄▄     ▄▄██▄▄▄    ▄█████  ██▄▄▄▄  ██████▄  ███        █  ██▄▄▄▄     ▄█████      ███    ███    █████    ▄████▄  ██   █     ▄▄██▄▄▄     ▄█████ ██▄▄▄▄      ██
+      █   ███        ██    ██  ▄█▀▀██▀▀█▄  ▄█▀▀██▀▀█▄   ██   ██ ██▀▀▀█▄ ██   ▀██ ███       ██  ██▀▀▀█▄   ██   █       ███    ███   ██  ██   ██    ▀  ██   ██  ▄█▀▀██▀▀█▄   ██   █  ██▀▀▀█▄ ▀███████▄
+      █   ███        ██    ██  ██  ██  ██  ██  ██  ██   ██   ██ ██   ██ ██    ██ ███       ██▌ ██   ██  ▄██▄▄       ▀███████████  ▄██▄▄█▀  ▄██       ██   ██  ██  ██  ██  ▄██▄▄    ██   ██     ██  ▀
+      █   ███    █▄  ██    ██  ██  ██  ██  ██  ██  ██ ▀████████ ██   ██ ██    ██ ███       ██  ██   ██ ▀▀██▀▀         ███    ███ ▀███████ ▀▀██ ███▄  ██   ██  ██  ██  ██ ▀▀██▀▀    ██   ██     ██
+      █   ███    ███ ██    ██  ██  ██  ██  ██  ██  ██   ██   ██ ██   ██ ██   ▄██ ███▌    ▄ ██  ██   ██   ██   █       ███    ███   ██  ██   ██    ██ ██   ██  ██  ██  ██   ██   █  ██   ██     ██
+      █   ████████▀   ██████    █  ██  █    █  ██  █    ██   █▀  █   █  ██████▀  █████▄▄██ █    █   █    ███████ ██   ███    █▀    ██  ██   ██████▀  ██████    █  ██  █    ███████  █   █     ▄██▀
+      █
+ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ▄▄  ▄▄ ▄▄   ▄▄▄▄ ▄▄     ▄▄     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ▄ ▄
+ █████████████████████████████████████████████████████████████ ███████████████ ██  ██ ██   ████ ██     ██     ████████████████ █ █
+      ▄
+      █  Provides static methods used to retrieve the command line arguments with which the application was started.
+      █
+      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀▀▀▀▀▀▀▀▀ ▀ ▀▀▀     ▀▀               ▀
+      █  The MIT License (MIT)
+      █
+      █  Copyright (c) 2017 JP Dillingham (jp@dillingham.ws)
+      █
+      █  Permission is hereby granted, free of charge, to any person obtaining a copy
+      █  of this software and associated documentation files (the "Software"), to deal
+      █  in the Software without restriction, including without limitation the rights
+      █  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+      █  copies of the Software, and to permit persons to whom the Software is
+      █  furnished to do so, subject to the following conditions:
+      █
+      █  The above copyright notice and this permission notice shall be included in all
+      █  copies or substantial portions of the Software.
+      █
+      █  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+      █  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+      █  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+      █  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+      █  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+      █  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+      █  SOFTWARE.
+      █
+      ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀  ▀▀ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀██
+                                                                                                   ██
+                                                                                               ▀█▄ ██ ▄█▀
+                                                                                                 ▀████▀
+                                                                                                   ▀▀                            */
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+
+[assembly: SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed.")]
 
 namespace CommandLine
 {
@@ -11,6 +60,7 @@ namespace CommandLine
     ///     Indicates that the property is to be used as a target for automatic population of values from command line arguments
     ///     when invoking the <see cref="Arguments.Populate(string)"/> method.
     /// </summary>
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed.")]
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ArgumentAttribute : Attribute
     {
@@ -19,7 +69,7 @@ namespace CommandLine
         /// <summary>
         ///     Initializes a new instance of the <see cref="ArgumentAttribute"/> class.
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name">The name of the argument, as appears in the list of the command line arguments.</param>
         public ArgumentAttribute(string name)
         {
             Name = name;
@@ -30,7 +80,7 @@ namespace CommandLine
         #region Public Properties
 
         /// <summary>
-        ///     The name of the argument, as appears in the list of the command line arguments.
+        ///     Gets or sets the name of the argument, as appears in the list of the command line arguments.
         /// </summary>
         public string Name { get; set; }
 
@@ -38,7 +88,7 @@ namespace CommandLine
     }
 
     /// <summary>
-    ///     Provides the static methods used to retrieve the command line arguments with which the application was started.
+    ///     Provides static methods used to retrieve the command line arguments with which the application was started.
     /// </summary>
     public class Arguments
     {
@@ -47,7 +97,7 @@ namespace CommandLine
         /// <summary>
         ///     The regular expression with which to parse the command line string.
         /// </summary>
-        private const string regEx = "(?:[-]{1,2}|\\/)([\\w-]+)[=|:| ]?(\\w\\S*|\\\".*\\\"|\\\'.*\\\')?";
+        private const string RegEx = "(?:[-]{1,2}|\\/)([\\w-]+)[=|:| ]?(\\w\\S*|\\\".*\\\"|\\\'.*\\\')?";
 
         #endregion Private Fields
 
@@ -172,7 +222,7 @@ namespace CommandLine
             Dictionary<string, string> argumentDictionary = new Dictionary<string, string>();
 
             // iterate over the collection of matches to the parsing regular expression
-            foreach (Match match in Regex.Matches(commandLineString, regEx))
+            foreach (Match match in Regex.Matches(commandLineString, RegEx))
             {
                 // ensure the match contains three groups; the key/value pair (0), the key (1), and the value (2)
                 if (match.Groups.Count == 3)
