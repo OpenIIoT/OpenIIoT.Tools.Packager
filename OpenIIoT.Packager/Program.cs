@@ -6,19 +6,19 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using CommandLine;
+using Utility.CommandLine;
 
 namespace OpenIIoT.Packager
 {
     internal class Program
     {
-        [Argument("generate-manifest")]
+        [Argument('g', "generate-manifest")]
         private static string GenerateManifest { get; set; }
 
-        [Argument("five")]
+        [Argument('5', "five")]
         private static int Five { get; set; }
 
-        [Argument("true")]
+        [Argument('t', "true")]
         private static bool TrueOrFalse { get; set; }
 
         private static void Main(string[] args)
