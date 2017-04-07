@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using OpenIIoT.SDK.Package.Manifest;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -12,31 +14,53 @@ namespace OpenIIoT.Packager
 {
     internal class Program
     {
+        #region Private Properties
+
+        [Argument('h', "hash-files")]
+        private static bool a { get; set; }
+
         [Argument('g', "generate-manifest")]
-        private static string GenerateManifest { get; set; }
+        private static string Generate { get; set; }
 
-        [Argument('5', "five")]
-        private static int Five { get; set; }
+        [Argument('m', "manifest")]
+        private static string Manifest { get; set; }
 
-        [Argument('t', "true")]
-        private static bool TrueOrFalse { get; set; }
+        [Operands]
+        private static string[] Operands { get; set; }
+
+        [Argument('p', "payload")]
+        private static string Payload { get; set; }
+
+        #endregion Private Properties
+
+        #region Private Methods
+
+        private static string GenerateManifest()
+        {
+            PackageManifest manifest = new PackageManifest();
+
+            manifest.Title = "MyPlugin";
+            manifest.Version = "1.0.0";
+            manifest.Namespace = "MyCompany.MyApps";
+            manifest.Description = "My plugin.";
+            manifest.Publisher = "Me";
+            manifest.Copyright = "Copyright (c) " + DateTime.Now.Year + " Me";
+            manifest.License = "GNU GPLv3";
+            manifest.Url = "http://github.com/";
+
+            return JsonConvert.SerializeObject(manifest, new JsonSerializerSettings { Formatting = Formatting.Indented, NullValueHandling = NullValueHandling.Ignore });
+        }
 
         private static void Main(string[] args)
         {
             Arguments.Populate();
 
-            var argdict = Arguments.Parse();
-
-            foreach (string key in argdict.Keys)
+            if (Generate != default(string))
             {
-                Console.WriteLine("Key: " + key + "\tValue: " + argdict[key]);
+                Console.WriteLine(GenerateManifest());
             }
-
-            Console.WriteLine("GenerateManifest: " + GenerateManifest);
-            Console.WriteLine("Five: " + Five);
-            Console.WriteLine("True Or False: " + TrueOrFalse);
-
-            Console.ReadLine();
         }
+
+        #endregion Private Methods
     }
 }
