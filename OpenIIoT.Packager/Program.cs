@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Utility.CommandLine;
+using System.IO;
 
 namespace OpenIIoT.Packager
 {
@@ -35,29 +36,33 @@ namespace OpenIIoT.Packager
 
         #region Private Methods
 
-        private static string GenerateManifest()
-        {
-            PackageManifest manifest = new PackageManifest();
-
-            manifest.Title = "MyPlugin";
-            manifest.Version = "1.0.0";
-            manifest.Namespace = "MyCompany.MyApps";
-            manifest.Description = "My plugin.";
-            manifest.Publisher = "Me";
-            manifest.Copyright = "Copyright (c) " + DateTime.Now.Year + " Me";
-            manifest.License = "GNU GPLv3";
-            manifest.Url = "http://github.com/";
-
-            return JsonConvert.SerializeObject(manifest, new JsonSerializerSettings { Formatting = Formatting.Indented, NullValueHandling = NullValueHandling.Ignore });
-        }
-
         private static void Main(string[] args)
         {
+            Console.WriteLine(Environment.CommandLine);
+
             Arguments.Populate();
 
             if (Generate != default(string))
             {
-                Console.WriteLine(GenerateManifest());
+                Console.WriteLine("Generate: " + Generate);
+
+                PackageManifest manifest = PackageManifestFactory.GetExamplePackageManifest();
+
+                if (Generate == string.Empty)
+                {
+                    Console.WriteLine(manifest.ToJson());
+                }
+                else
+                {
+                    try
+                    {
+                        File.WriteAllText(Generate, manifest.ToJson());
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error writing to output file '" + Generate + "': " + ex.Message);
+                    }
+                }
             }
         }
 
