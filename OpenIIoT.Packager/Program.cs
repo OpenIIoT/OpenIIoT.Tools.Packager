@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using OpenIIoT.SDK.Package.Manifest;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -6,37 +8,64 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using CommandLine;
+using Utility.CommandLine;
+using System.IO;
 
 namespace OpenIIoT.Packager
 {
     internal class Program
     {
-        [Argument("generate-manifest")]
-        private static string GenerateManifest { get; set; }
+        #region Private Properties
 
-        [Argument("five")]
-        private static int Five { get; set; }
+        [Argument('h', "hash-files")]
+        private static bool a { get; set; }
 
-        [Argument("true")]
-        private static bool TrueOrFalse { get; set; }
+        [Argument('g', "generate-manifest")]
+        private static string Generate { get; set; }
+
+        [Argument('m', "manifest")]
+        private static string Manifest { get; set; }
+
+        [Operands]
+        private static string[] Operands { get; set; }
+
+        [Argument('p', "payload")]
+        private static string Payload { get; set; }
+
+        #endregion Private Properties
+
+        #region Private Methods
 
         private static void Main(string[] args)
         {
+            Console.WriteLine(Environment.CommandLine);
+
             Arguments.Populate();
 
-            var argdict = Arguments.Parse();
-
-            foreach (string key in argdict.Keys)
+            if (Generate != default(string))
             {
-                Console.WriteLine("Key: " + key + "\tValue: " + argdict[key]);
+                Console.WriteLine("Generate: " + Generate);
+
+                PackageManifest manifest = PackageManifestFactory.GetExamplePackageManifest();
+
+                if (Generate == string.Empty)
+                {
+                    Console.WriteLine(manifest.ToJson());
+                }
+                else
+                {
+                    try
+                    {
+                        File.WriteAllText(Generate, manifest.ToJson());
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error writing to output file '" + Generate + "': " + ex.Message);
+                    }
+                }
             }
-
-            Console.WriteLine("GenerateManifest: " + GenerateManifest);
-            Console.WriteLine("Five: " + Five);
-            Console.WriteLine("True Or False: " + TrueOrFalse);
-
-            Console.ReadLine();
         }
+
+        #endregion Private Methods
     }
 }
