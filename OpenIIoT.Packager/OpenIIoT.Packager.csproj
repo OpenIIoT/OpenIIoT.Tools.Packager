@@ -53,8 +53,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="Utility.CommandLine.Arguments, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Utility.CommandLine.Arguments.1.1.0\lib\Utility.CommandLine.Arguments.dll</HintPath>
+    <Reference Include="Utility.CommandLine.Arguments, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Utility.CommandLine.Arguments.1.1.1\lib\Utility.CommandLine.Arguments.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Utility.PGPSignatureTools, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
