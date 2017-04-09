@@ -36,7 +36,7 @@ namespace OpenIIoT.Packager
 
         #region Private Methods
 
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
             Console.WriteLine(Environment.CommandLine);
 
