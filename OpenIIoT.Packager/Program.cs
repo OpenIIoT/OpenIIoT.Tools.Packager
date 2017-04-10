@@ -46,7 +46,7 @@ namespace OpenIIoT.Packager
             {
                 Console.WriteLine("Generate: " + Generate);
 
-                PackageManifest manifest = PackageManifestFactory.GetExamplePackageManifest();
+                PackageManifest manifest = PackageManifestFactory.GetDefault();
 
                 if (Generate == string.Empty)
                 {

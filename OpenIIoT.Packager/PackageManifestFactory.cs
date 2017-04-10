@@ -12,7 +12,12 @@ namespace OpenIIoT.Packager
     {
         #region Public Methods
 
-        public static PackageManifest GetExamplePackageManifest()
+        public static PackageManifest GetBlank()
+        {
+            return new PackageManifest();
+        }
+
+        public static PackageManifest GetDefault()
         {
             PackageManifest manifest = new PackageManifest();
 
