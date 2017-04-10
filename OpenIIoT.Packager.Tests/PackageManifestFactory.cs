@@ -1,5 +1,4 @@
 ﻿using OpenIIoT.SDK.Package.Manifest;
-using System;
 using Xunit;
 
 namespace OpenIIoT.Packager.Tests
