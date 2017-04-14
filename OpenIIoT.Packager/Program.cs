@@ -55,7 +55,18 @@ namespace OpenIIoT.Packager
                         Console.WriteLine("File: " + file);
                         Console.WriteLine("Hash: " + res);
 
-                        manifest.Files.Add(new PackageManifestFile() { Source = Utility.MakeRelativePath(directory, file), Hash = res });
+                        PackageManifestFile manifestFile = new PackageManifestFile();
+
+                        manifestFile.Source = Utility.MakeRelativePath(directory, file);
+
+                        if (GetFileType(file) != default(PackageManifestFileType))
+                        {
+                            manifestFile.Type = GetFileType(file);
+                        }
+
+                        manifestFile.Hash = res;
+
+                        manifest.Files.Add(manifestFile);
                     }
                 }
             }
@@ -97,6 +108,26 @@ namespace OpenIIoT.Packager
             }
         }
 
-        #endregion Private Methods
+        #region Public Methods
+
+        public static PackageManifestFileType GetFileType(string file)
+        {
+            string extension = Path.GetExtension(file);
+
+            switch (extension)
+            {
+                case "dll":
+                    return PackageManifestFileType.Binary;
+
+                case "html":
+                    return PackageManifestFileType.Web;
+            }
+
+            return default(PackageManifestFileType);
+        }
+
+        #endregion Public Methods
     }
+
+    #endregion Private Methods
 }
