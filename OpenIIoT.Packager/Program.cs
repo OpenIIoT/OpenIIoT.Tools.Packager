@@ -2,9 +2,6 @@
 using System;
 using Utility.CommandLine;
 using System.IO;
-using System.Security.Cryptography;
-using System.Collections.Generic;
-using System.Text;
 
 namespace OpenIIoT.Packager
 {
@@ -12,25 +9,28 @@ namespace OpenIIoT.Packager
     {
         #region Private Properties
 
-        [Argument('d', "directory")]
-        private static string InputDirectory { get; set; }
-
-        [Argument('i', "include-resources")]
-        private static bool IncludeResources { get; set; }
+        [Argument('g', "generate-manifest")]
+        private static bool GenerateManifest { get; set; }
 
         [Argument('h', "hash")]
         private static bool Hash { get; set; }
 
-        [Argument('g', "generate-manifest")]
-        private static bool GenerateManifest { get; set; }
+        [Argument('?', "help")]
+        private static bool Help { get; set; }
+
+        [Argument('i', "include-resources")]
+        private static bool IncludeResources { get; set; }
+
+        [Argument('d', "directory")]
+        private static string InputDirectory { get; set; }
+
+        [Argument('m', "manifest")]
+        private static string Manifest { get; set; }
 
         [Argument('o', "output")]
         private static string OutputFile { get; set; }
 
-        [Operands]
-        private static string[] Operands { get; set; }
-
-        [Argument('p', "package")]
+        [Argument('p', "create-package")]
         private static bool Package { get; set; }
 
         #endregion Private Properties
@@ -88,6 +88,11 @@ namespace OpenIIoT.Packager
 
             if (GenerateManifest)
             {
+                if (Package)
+                {
+                    Console.WriteLine("Can't generate a manifest and create a package at the same time; generate first, then package.");
+                }
+
                 PackageManifest manifest = GenerateDefaultManifest(InputDirectory, IncludeResources, Hash);
 
                 if (OutputFile != default(string))
@@ -105,6 +110,15 @@ namespace OpenIIoT.Packager
                 {
                     Console.Write(manifest.ToJson());
                 }
+            }
+            else if (Package)
+            {
+                // TODO : create package etc
+            }
+            else
+            {
+                Console.WriteLine("Select an operation; either generate a manifest (-g or --generate-manifest) or create a package (-p or --create-package).");
+                Console.WriteLine("Start the application with -h or --help for a full explanation of arguments.");
             }
         }
     }
