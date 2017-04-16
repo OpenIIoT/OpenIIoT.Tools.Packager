@@ -12,20 +12,26 @@ namespace OpenIIoT.Packager
     {
         #region Private Properties
 
-        [Argument('h', "hash-files")]
-        private static bool a { get; set; }
+        [Argument('d', "directory")]
+        private static string InputDirectory { get; set; }
 
-        [Argument('g', "generate-manifest")]
-        private static string Generate { get; set; }
+        [Argument('i', "include-resources")]
+        private static bool IncludeResources { get; set; }
 
-        [Argument('m', "manifest")]
-        private static string Manifest { get; set; }
+        [Argument('h', "hash")]
+        private static bool Hash { get; set; }
+
+        [Argument('g', "generate")]
+        private static bool Generate { get; set; }
+
+        [Argument('o', "output")]
+        private static string OutputFile { get; set; }
 
         [Operands]
         private static string[] Operands { get; set; }
 
-        [Argument('p', "payload")]
-        private static string Payload { get; set; }
+        [Argument('p', "package")]
+        private static bool Package { get; set; }
 
         #endregion Private Properties
 
@@ -57,11 +63,11 @@ namespace OpenIIoT.Packager
 
                         PackageManifestFile manifestFile = new PackageManifestFile();
 
-                        manifestFile.Source = Utility.MakeRelativePath(directory, file);
+                        manifestFile.Source = Utility.GetRelativePath(directory, file);
 
-                        if (GetFileType(file) != default(PackageManifestFileType))
+                        if (Utility.GetFileType(file) != default(PackageManifestFileType))
                         {
-                            manifestFile.Type = GetFileType(file);
+                            manifestFile.Type = Utility.GetFileType(file);
                         }
 
                         manifestFile.Hash = res;
@@ -80,53 +86,26 @@ namespace OpenIIoT.Packager
 
         public static void Main(string[] args)
         {
-            Console.WriteLine(Environment.CommandLine);
-
             Arguments.Populate();
 
-            if (Generate != default(string))
+            if (Generate)
             {
-                Console.WriteLine("Generate: " + Generate);
+                Console.WriteLine("Generating manifest" + (InputDirectory == string.Empty ? string.Empty : " for directory '" + InputDirectory) + "'...");
 
-                PackageManifest manifest = GenerateManifest(Operands[1]);
-
-                if (Generate == string.Empty)
+                if (InputDirectory != string.Empty && Directory.Exists(InputDirectory))
                 {
-                    Console.WriteLine(manifest.ToJson());
+                    PackageManifest manifest = PackageManifestFactory.GetDefault();
+
+                    foreach (string file in Directory.EnumerateFiles(InputDirectory, "*", SearchOption.AllDirectories))
+                    {
+                    }
                 }
                 else
                 {
-                    try
-                    {
-                        File.WriteAllText(Generate, manifest.ToJson());
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Error writing to output file '" + Generate + "': " + ex.Message);
-                    }
+                    Console.WriteLine("Unable to locate directory '" + InputDirectory + "'.  Exiting.");
                 }
             }
         }
-
-        #region Public Methods
-
-        public static PackageManifestFileType GetFileType(string file)
-        {
-            string extension = Path.GetExtension(file);
-
-            switch (extension)
-            {
-                case "dll":
-                    return PackageManifestFileType.Binary;
-
-                case "html":
-                    return PackageManifestFileType.Web;
-            }
-
-            return default(PackageManifestFileType);
-        }
-
-        #endregion Public Methods
     }
 
     #endregion Private Methods

@@ -1,6 +1,9 @@
 ﻿using Newtonsoft.Json;
+using OpenIIoT.SDK.Package.Manifest;
 using System;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace OpenIIoT.Packager
 {
@@ -8,39 +11,61 @@ namespace OpenIIoT.Packager
     {
         #region Public Methods
 
-        /// <summary>
-        ///     Creates a relative path from one file or folder to another.
-        /// </summary>
-        /// <param name="fromPath">Contains the directory that defines the start of the relative path.</param>
-        /// <param name="toPath">Contains the path that defines the endpoint of the relative path.</param>
-        /// <returns>The relative path from the start directory to the end path or <c>toPath</c> if the paths are not related.</returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="UriFormatException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
-        public static string MakeRelativePath(String fromPath, String toPath)
+        public static string GetRelativePath(string baseDirectory, string file)
         {
-            if (String.IsNullOrEmpty(fromPath)) throw new ArgumentNullException("fromPath");
-            if (String.IsNullOrEmpty(toPath)) throw new ArgumentNullException("toPath");
-
-            Uri fromUri = new Uri(fromPath);
-            Uri toUri = new Uri(toPath);
-
-            if (fromUri.Scheme != toUri.Scheme) { return toPath; } // path can't be made relative.
-
-            Uri relativeUri = fromUri.MakeRelativeUri(toUri);
-            String relativePath = Uri.UnescapeDataString(relativeUri.ToString());
-
-            if (toUri.Scheme.Equals("file", StringComparison.InvariantCultureIgnoreCase))
-            {
-                relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-            }
-
-            return relativePath;
+            return file.Replace(baseDirectory, string.Empty);
         }
 
         public static string ToJson(this object obj)
         {
-            return JsonConvert.SerializeObject(obj, new JsonSerializerSettings { Formatting = Formatting.Indented, NullValueHandling = NullValueHandling.Ignore });
+            return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore,
+            });
+        }
+
+        public static PackageManifestFileType GetFileType(string file)
+        {
+            if (Path.GetExtension(file) == "dll")
+            {
+                return PackageManifestFileType.Binary;
+            }
+            else if (file.Equals("index.html", StringComparison.OrdinalIgnoreCase))
+            {
+                return PackageManifestFileType.WebIndex;
+            }
+            else
+            {
+                return PackageManifestFileType.Resource;
+            }
+        }
+
+        public static string GetFileSHA512Hash(string file)
+        {
+            if (File.Exists(file))
+            {
+                byte[] fileBytes = File.ReadAllBytes(file);
+                byte[] hash;
+
+                using (SHA512 sha512 = new SHA512Managed())
+                {
+                    hash = sha512.ComputeHash(fileBytes);
+                }
+
+                StringBuilder stringBuilder = new StringBuilder(128);
+
+                foreach (byte b in hash)
+                {
+                    stringBuilder.Append(b.ToString("X2"));
+                }
+
+                return stringBuilder.ToString();
+            }
+            else
+            {
+                throw new FileNotFoundException($"The file {file} could not be found.");
+            }
         }
 
         #endregion Public Methods
