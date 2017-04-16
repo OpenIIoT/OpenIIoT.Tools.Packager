@@ -2,6 +2,8 @@
 using System;
 using Utility.CommandLine;
 using System.IO;
+using System.Collections.Generic;
+using Utility.BigFont;
 
 namespace OpenIIoT.Packager
 {
@@ -9,14 +11,11 @@ namespace OpenIIoT.Packager
     {
         #region Private Properties
 
-        [Argument('g', "generate-manifest")]
-        private static bool GenerateManifest { get; set; }
-
         [Argument('h', "hash")]
         private static bool Hash { get; set; }
 
         [Argument('?', "help")]
-        private static bool Help { get; set; }
+        private static string Help { get; set; }
 
         [Argument('i', "include-resources")]
         private static bool IncludeResources { get; set; }
@@ -30,70 +29,36 @@ namespace OpenIIoT.Packager
         [Argument('o', "output")]
         private static string OutputFile { get; set; }
 
-        [Argument('p', "create-package")]
-        private static bool Package { get; set; }
+        [Argument('p', "package")]
+        private static string Package { get; set; }
+
+        [Operands]
+        private static List<string> Operands { get; set; }
 
         #endregion Private Properties
 
         #region Private Methods
 
-        public static PackageManifest GenerateDefaultManifest(string directory = default(string), bool includeResources = default(bool), bool hash = default(bool))
-        {
-            PackageManifestBuilder builder = new PackageManifestBuilder();
-            builder.BuildDefault();
-
-            if (directory != default(string) && directory != string.Empty)
-            {
-                if (Directory.Exists(directory))
-                {
-                    Console.WriteLine($"Adding files from '{directory}'...");
-
-                    foreach (string file in Directory.GetFiles(directory, "*", SearchOption.AllDirectories))
-                    {
-                        PackageManifestFileType type = Utility.GetFileType(file);
-
-                        if (type == PackageManifestFileType.Binary || type == PackageManifestFileType.WebIndex || (type == PackageManifestFileType.Resource && includeResources))
-                        {
-                            Console.WriteLine($"Adding '{file}'...");
-                            PackageManifestFile newFile = new PackageManifestFile();
-
-                            newFile.Type = type;
-                            newFile.Source = Utility.GetRelativePath(directory, file);
-
-                            if (hash)
-                            {
-                                newFile.Hash = Utility.GetFileSHA512Hash(file);
-                            }
-
-                            builder.AddFile(newFile);
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Skipping file '{file}...");
-                        }
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"Couldn't find input directory '{directory}'.");
-                }
-            }
-
-            return builder.Manifest;
-        }
-
         public static void Main(string[] args)
         {
             Arguments.Populate();
 
-            if (GenerateManifest)
-            {
-                if (Package)
-                {
-                    Console.WriteLine("Can't generate a manifest and create a package at the same time; generate first, then package.");
-                }
+            string command = "help";
 
-                PackageManifest manifest = GenerateDefaultManifest(InputDirectory, IncludeResources, Hash);
+            if (Operands.Count > 1)
+            {
+                command = Operands[1].ToLower();
+            }
+
+            if (Help != default(string))
+            {
+                HelpPrinter.PrintHelp(Help);
+                return;
+            }
+
+            if (command == "manifest")
+            {
+                PackageManifest manifest = ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, Hash);
 
                 if (OutputFile != default(string))
                 {
@@ -103,7 +68,7 @@ namespace OpenIIoT.Packager
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Unable to write to output file '{OutputFile}'");
+                        Console.WriteLine($"Unable to write to output file '{OutputFile}': {ex.Message}");
                     }
                 }
                 else
@@ -111,14 +76,24 @@ namespace OpenIIoT.Packager
                     Console.Write(manifest.ToJson());
                 }
             }
-            else if (Package)
+            else if (command == "package")
             {
-                // TODO : create package etc
             }
-            else
+            else if (command == "sign")
             {
-                Console.WriteLine("Select an operation; either generate a manifest (-g or --generate-manifest) or create a package (-p or --create-package).");
-                Console.WriteLine("Start the application with -h or --help for a full explanation of arguments.");
+            }
+            else if (command == "verify")
+            {
+            }
+            else if (command == "create-trust")
+            {
+            }
+            else if (command == "verify-trust")
+            {
+            }
+            else if (command == "help")
+            {
+                HelpPrinter.PrintHelp(Operands.Count > 2 ? Operands[2] : default(string));
             }
         }
     }
