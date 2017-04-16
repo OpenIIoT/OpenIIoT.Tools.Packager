@@ -21,8 +21,8 @@ namespace OpenIIoT.Packager
         [Argument('h', "hash")]
         private static bool Hash { get; set; }
 
-        [Argument('g', "generate")]
-        private static bool Generate { get; set; }
+        [Argument('g', "generate-manifest")]
+        private static bool GenerateManifest { get; set; }
 
         [Argument('o', "output")]
         private static string OutputFile { get; set; }
@@ -37,72 +37,73 @@ namespace OpenIIoT.Packager
 
         #region Private Methods
 
-        public static PackageManifest GenerateManifest(string directory = "")
+        public static PackageManifest GenerateDefaultManifest(string directory = default(string), bool includeResources = default(bool), bool hash = default(bool))
         {
-            PackageManifest manifest = PackageManifestFactory.GetDefault();
-            manifest.Files = new List<IPackageManifestFile>();
+            PackageManifestBuilder builder = new PackageManifestBuilder();
+            builder.BuildDefault();
 
-            if (directory != string.Empty && Directory.Exists(directory))
+            if (directory != default(string) && directory != string.Empty)
             {
-                foreach (string file in Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories))
+                if (Directory.Exists(directory))
                 {
-                    if (File.Exists(file))
+                    Console.WriteLine($"Adding files from '{directory}'...");
+
+                    foreach (string file in Directory.GetFiles(directory, "*", SearchOption.AllDirectories))
                     {
-                        byte[] data = File.ReadAllBytes(file);
-                        byte[] result;
-                        SHA512 shaM = new SHA512Managed();
-                        result = shaM.ComputeHash(data);
+                        PackageManifestFileType type = Utility.GetFileType(file);
 
-                        var hashedInputStringBuilder = new System.Text.StringBuilder(128);
-                        foreach (var b in result)
-                            hashedInputStringBuilder.Append(b.ToString("X2"));
-                        string res = hashedInputStringBuilder.ToString();
-
-                        Console.WriteLine("File: " + file);
-                        Console.WriteLine("Hash: " + res);
-
-                        PackageManifestFile manifestFile = new PackageManifestFile();
-
-                        manifestFile.Source = Utility.GetRelativePath(directory, file);
-
-                        if (Utility.GetFileType(file) != default(PackageManifestFileType))
+                        if (type == PackageManifestFileType.Binary || type == PackageManifestFileType.WebIndex || (type == PackageManifestFileType.Resource && includeResources))
                         {
-                            manifestFile.Type = Utility.GetFileType(file);
+                            Console.WriteLine($"Adding '{file}'...");
+                            PackageManifestFile newFile = new PackageManifestFile();
+
+                            newFile.Type = type;
+                            newFile.Source = Utility.GetRelativePath(directory, file);
+
+                            if (hash)
+                            {
+                                newFile.Hash = Utility.GetFileSHA512Hash(file);
+                            }
+
+                            builder.AddFile(newFile);
                         }
-
-                        manifestFile.Hash = res;
-
-                        manifest.Files.Add(manifestFile);
+                        else
+                        {
+                            Console.WriteLine($"Skipping file '{file}...");
+                        }
                     }
                 }
-            }
-            else
-            {
-                Console.WriteLine("Couldn't find directory '" + directory + "'.");
+                else
+                {
+                    Console.WriteLine($"Couldn't find input directory '{directory}'.");
+                }
             }
 
-            return manifest;
+            return builder.Manifest;
         }
 
         public static void Main(string[] args)
         {
             Arguments.Populate();
 
-            if (Generate)
+            if (GenerateManifest)
             {
-                Console.WriteLine("Generating manifest" + (InputDirectory == string.Empty ? string.Empty : " for directory '" + InputDirectory) + "'...");
+                PackageManifest manifest = GenerateDefaultManifest(InputDirectory, IncludeResources, Hash);
 
-                if (InputDirectory != string.Empty && Directory.Exists(InputDirectory))
+                if (OutputFile != default(string))
                 {
-                    PackageManifest manifest = PackageManifestFactory.GetDefault();
-
-                    foreach (string file in Directory.EnumerateFiles(InputDirectory, "*", SearchOption.AllDirectories))
+                    try
                     {
+                        File.WriteAllText(OutputFile, manifest.ToJson());
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Unable to write to output file '{OutputFile}'");
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Unable to locate directory '" + InputDirectory + "'.  Exiting.");
+                    Console.Write(manifest.ToJson());
                 }
             }
         }
