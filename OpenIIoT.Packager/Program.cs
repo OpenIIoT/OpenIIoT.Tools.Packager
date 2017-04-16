@@ -1,15 +1,10 @@
-﻿using Newtonsoft.Json;
-using OpenIIoT.SDK.Package.Manifest;
+﻿using OpenIIoT.SDK.Package.Manifest;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Utility.CommandLine;
 using System.IO;
+using System.Security.Cryptography;
+using System.Collections.Generic;
+using System.Text;
 
 namespace OpenIIoT.Packager
 {
@@ -17,55 +12,102 @@ namespace OpenIIoT.Packager
     {
         #region Private Properties
 
-        [Argument('h', "hash-files")]
-        private static bool a { get; set; }
+        [Argument('d', "directory")]
+        private static string InputDirectory { get; set; }
+
+        [Argument('i', "include-resources")]
+        private static bool IncludeResources { get; set; }
+
+        [Argument('h', "hash")]
+        private static bool Hash { get; set; }
 
         [Argument('g', "generate-manifest")]
-        private static string Generate { get; set; }
+        private static bool GenerateManifest { get; set; }
 
-        [Argument('m', "manifest")]
-        private static string Manifest { get; set; }
+        [Argument('o', "output")]
+        private static string OutputFile { get; set; }
 
         [Operands]
         private static string[] Operands { get; set; }
 
-        [Argument('p', "payload")]
-        private static string Payload { get; set; }
+        [Argument('p', "package")]
+        private static bool Package { get; set; }
 
         #endregion Private Properties
 
         #region Private Methods
 
-        private static void Main(string[] args)
+        public static PackageManifest GenerateDefaultManifest(string directory = default(string), bool includeResources = default(bool), bool hash = default(bool))
         {
-            Console.WriteLine(Environment.CommandLine);
+            PackageManifestBuilder builder = new PackageManifestBuilder();
+            builder.BuildDefault();
 
-            Arguments.Populate();
-
-            if (Generate != default(string))
+            if (directory != default(string) && directory != string.Empty)
             {
-                Console.WriteLine("Generate: " + Generate);
-
-                PackageManifest manifest = PackageManifestFactory.GetExamplePackageManifest();
-
-                if (Generate == string.Empty)
+                if (Directory.Exists(directory))
                 {
-                    Console.WriteLine(manifest.ToJson());
+                    Console.WriteLine($"Adding files from '{directory}'...");
+
+                    foreach (string file in Directory.GetFiles(directory, "*", SearchOption.AllDirectories))
+                    {
+                        PackageManifestFileType type = Utility.GetFileType(file);
+
+                        if (type == PackageManifestFileType.Binary || type == PackageManifestFileType.WebIndex || (type == PackageManifestFileType.Resource && includeResources))
+                        {
+                            Console.WriteLine($"Adding '{file}'...");
+                            PackageManifestFile newFile = new PackageManifestFile();
+
+                            newFile.Type = type;
+                            newFile.Source = Utility.GetRelativePath(directory, file);
+
+                            if (hash)
+                            {
+                                newFile.Hash = Utility.GetFileSHA512Hash(file);
+                            }
+
+                            builder.AddFile(newFile);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Skipping file '{file}...");
+                        }
+                    }
                 }
                 else
                 {
+                    Console.WriteLine($"Couldn't find input directory '{directory}'.");
+                }
+            }
+
+            return builder.Manifest;
+        }
+
+        public static void Main(string[] args)
+        {
+            Arguments.Populate();
+
+            if (GenerateManifest)
+            {
+                PackageManifest manifest = GenerateDefaultManifest(InputDirectory, IncludeResources, Hash);
+
+                if (OutputFile != default(string))
+                {
                     try
                     {
-                        File.WriteAllText(Generate, manifest.ToJson());
+                        File.WriteAllText(OutputFile, manifest.ToJson());
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Error writing to output file '" + Generate + "': " + ex.Message);
+                        Console.WriteLine($"Unable to write to output file '{OutputFile}'");
                     }
+                }
+                else
+                {
+                    Console.Write(manifest.ToJson());
                 }
             }
         }
-
-        #endregion Private Methods
     }
+
+    #endregion Private Methods
 }
