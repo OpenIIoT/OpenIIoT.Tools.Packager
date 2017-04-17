@@ -6,9 +6,14 @@ namespace OpenIIoT.Packager
 {
     public static class ManifestGenerator
     {
-        public static PackageManifest GenerateManifest(string directory = default(string), bool includeResources = default(bool), bool hash = default(bool))
+        #region Public Methods
+
+        public static PackageManifest GenerateManifest(string directory = default(string), bool includeResources = default(bool), bool hashFiles = default(bool))
         {
             PackageManifestBuilder builder = new PackageManifestBuilder();
+
+            Console.WriteLine("Generating new manifest...");
+
             builder.BuildDefault();
 
             if (directory != default(string) && directory != string.Empty)
@@ -26,15 +31,14 @@ namespace OpenIIoT.Packager
                             Console.WriteLine($"Adding '{file}'...");
                             PackageManifestFile newFile = new PackageManifestFile();
 
-                            newFile.Type = type;
                             newFile.Source = Utility.GetRelativePath(directory, file);
 
-                            if (hash)
+                            if (type == PackageManifestFileType.Binary || hashFiles)
                             {
-                                newFile.Hash = "[Deferred until packaging]";
+                                newFile.Hash = "[deferred]";
                             }
 
-                            builder.AddFile(newFile);
+                            builder.AddFile(type, newFile);
                         }
                         else
                         {
@@ -48,7 +52,11 @@ namespace OpenIIoT.Packager
                 }
             }
 
+            Console.WriteLine("Manifest generated.");
+
             return builder.Manifest;
         }
+
+        #endregion Public Methods
     }
 }

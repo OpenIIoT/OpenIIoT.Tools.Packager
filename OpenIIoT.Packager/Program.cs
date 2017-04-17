@@ -11,8 +11,8 @@ namespace OpenIIoT.Packager
     {
         #region Private Properties
 
-        [Argument('h', "hash")]
-        private static bool Hash { get; set; }
+        [Argument('h', "hash-files")]
+        private static bool HashFiles { get; set; }
 
         [Argument('?', "help")]
         private static string Help { get; set; }
@@ -58,7 +58,7 @@ namespace OpenIIoT.Packager
 
             if (command == "manifest")
             {
-                PackageManifest manifest = ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, Hash);
+                PackageManifest manifest = ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles);
 
                 if (OutputFile != default(string))
                 {

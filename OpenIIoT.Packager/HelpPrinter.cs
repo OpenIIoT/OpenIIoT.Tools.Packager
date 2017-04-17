@@ -144,7 +144,7 @@ namespace OpenIIoT.Packager
 
             c(" > trust\n");
             c(" <package>\t\tThe package to trust.");
-            c(" <private key file>\t\tThe ASCII-armored PGP private key file.");
+            c(" <private key file>\tThe ASCII-armored PGP private key file.");
 
             c("\n ! ex: 'verify \"coolPlugin.opkg\" \"privateKey.asc\"'");
             PrintFooter();
@@ -156,7 +156,7 @@ namespace OpenIIoT.Packager
             PrintHeader();
 
             c(" > verify\n");
-            c(" <package>\t\tThe package to verify.");
+            c(" <package>\tThe package to verify.");
 
             c("\n ! ex: 'verify \"coolPlugin.opkg\"'");
             PrintFooter();
@@ -168,7 +168,7 @@ namespace OpenIIoT.Packager
             PrintHeader();
 
             c(" > verify-trust\n");
-            c(" <package>\t\tThe package to verify.");
+            c(" <package>\tThe package to verify.");
 
             c("\n ! ex: 'verify-trust \"coolPlugin.opkg\"'");
             PrintFooter();

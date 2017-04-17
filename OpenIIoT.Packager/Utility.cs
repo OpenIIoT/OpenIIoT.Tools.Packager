@@ -11,36 +11,6 @@ namespace OpenIIoT.Packager
     {
         #region Public Methods
 
-        public static string GetRelativePath(string baseDirectory, string file)
-        {
-            return file.Replace(baseDirectory, string.Empty);
-        }
-
-        public static string ToJson(this object obj)
-        {
-            return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented,
-                NullValueHandling = NullValueHandling.Ignore,
-            });
-        }
-
-        public static PackageManifestFileType GetFileType(string file)
-        {
-            if (Path.GetExtension(file) == "dll")
-            {
-                return PackageManifestFileType.Binary;
-            }
-            else if (file.Equals("index.html", StringComparison.OrdinalIgnoreCase))
-            {
-                return PackageManifestFileType.WebIndex;
-            }
-            else
-            {
-                return PackageManifestFileType.Resource;
-            }
-        }
-
         public static string GetFileSHA512Hash(string file)
         {
             if (File.Exists(file))
@@ -66,6 +36,36 @@ namespace OpenIIoT.Packager
             {
                 throw new FileNotFoundException($"The file {file} could not be found.");
             }
+        }
+
+        public static PackageManifestFileType GetFileType(string file)
+        {
+            if (Path.GetExtension(file) == "dll")
+            {
+                return PackageManifestFileType.Binary;
+            }
+            else if (Path.GetFileName(file).Equals("index.html", StringComparison.OrdinalIgnoreCase) || Path.GetFileName(file).Equals("index.htm", StringComparison.OrdinalIgnoreCase))
+            {
+                return PackageManifestFileType.WebIndex;
+            }
+            else
+            {
+                return PackageManifestFileType.Resource;
+            }
+        }
+
+        public static string GetRelativePath(string baseDirectory, string file)
+        {
+            return file.Replace(baseDirectory, string.Empty);
+        }
+
+        public static string ToJson(this object obj)
+        {
+            return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore,
+            });
         }
 
         #endregion Public Methods
