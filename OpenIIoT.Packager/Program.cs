@@ -26,14 +26,14 @@ namespace OpenIIoT.Packager
         [Argument('m', "manifest")]
         private static string Manifest { get; set; }
 
+        [Operands]
+        private static List<string> Operands { get; set; }
+
         [Argument('o', "output")]
         private static string OutputFile { get; set; }
 
         [Argument('p', "package")]
         private static string Package { get; set; }
-
-        [Operands]
-        private static List<string> Operands { get; set; }
 
         #endregion Private Properties
 

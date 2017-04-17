@@ -9,22 +9,77 @@ namespace OpenIIoT.Packager
 {
     public static class HelpPrinter
     {
+        #region Private Fields
+
         private static Action<string> c = (s) => Console.WriteLine(s);
+
+        #endregion Private Fields
+
+        #region Public Methods
 
         public static void PrintHelp(string command = default(string))
         {
-            if (command == "manifest")
+            switch (command)
             {
-                PrintManifestHelp();
+                case "manifest":
+                    PrintManifestHelp();
+                    return;
+
+                case "package":
+                    PrintPackageHelp();
+                    return;
+
+                case "sign":
+                    PrintSignHelp();
+                    return;
+
+                case "verify":
+                    PrintVerifyHelp();
+                    return;
+
+                case "trust":
+                    PrintTrustHelp();
+                    return;
+
+                case "verify-trust":
+                    PrintVerifyTrustHelp();
+                    return;
+
+                default:
+                    PrintCommands();
+                    return;
             }
-            else if (command == "package")
-            {
-                PrintPackageHelp();
-            }
-            else
-            {
-                PrintCommands();
-            }
+        }
+
+        #endregion Public Methods
+
+        #region Private Methods
+
+        private static void PrintCommands()
+        {
+            PrintTitle("Commands");
+            PrintHeader();
+
+            c(" > manifest\tGenerate a package manifest file.");
+            c(" > package\tCreate a package file.");
+            c(" > sign\t\tDigitally sign a package file.");
+            c(" > verify\tVerify the integrity of a package file.");
+            c(" > trust\tAdd a trust to a signed package file.");
+            c(" > verify-trust\tVerify a trusted package file.");
+
+            c("\n ! use 'help <command>' to get more details about that command.");
+
+            PrintFooter();
+        }
+
+        private static void PrintFooter()
+        {
+            c("■■■■■■■■■■■■■■■■■■■■■■■■■■■■ ■ ■■■■ ■  ■■■ ");
+        }
+
+        private static void PrintHeader()
+        {
+            c("■■■■■■■■■■■■■■■■■■■■■■■■■■■■ ■ ■■■■ ■  ■  ■  ■■■ ■     ■");
         }
 
         private static void PrintManifestHelp()
@@ -48,28 +103,25 @@ namespace OpenIIoT.Packager
             PrintHeader();
 
             c(" > package\n");
-            c(" <-m|--manifest>\t\tThe manifest for the package (manifest.json, generate with 'manifest')");
-            c(" <-d|--directory <directory>>\tDirectory containing payload files.");
-            c(" <-o|--output <file>>\t\tOutput package file (*.opkg).");
+            c(" <directory>\tDirectory containing payload files.");
+            c(" <manifest>\tThe manifest for the package (manifest.json, generate with 'manifest')");
+            c(" <output file>\tOutput package file (*.opkg).");
 
-            c("\n ! ex: 'package -m \"manifest.json\" -d \"desktop\\coolPlugin\" -o \"coolPlugin.opkg\"'");
+            c("\n ! ex: 'package \"desktop\\coolPlugin\" \"manifest.json\" \"coolPlugin.opkg\"'");
             PrintFooter();
         }
 
-        private static void PrintCommands()
+        private static void PrintSignHelp()
         {
-            PrintTitle("Commands");
+            PrintTitle("Sign");
             PrintHeader();
 
-            c(" > manifest\tGenerate a package manifest file.");
-            c(" > package\tCreate a package file.");
-            c(" > sign\t\tDigitally sign a package file.");
-            c(" > verify\tVerify the integrity of a package file.");
-            c(" > trust\tAdd a trust to a signed package file.");
-            c(" > verify-trust\tVerify a trusted package file.");
+            c(" > sign\n");
+            c(" <package>\t\tThe package to sign.");
+            c(" <public key file>\tThe ASCII-armored PGP public key file.");
+            c(" <private key file>\tThe ASCII-armored PGP private key file.");
 
-            c("\n ! use 'help <command>' to get more details about that command.");
-
+            c("\n ! ex: 'sign \"coolPlugin.opkg\" \"publicKey.asc\" \"privateKey.asc\"");
             PrintFooter();
         }
 
@@ -85,14 +137,43 @@ namespace OpenIIoT.Packager
             }
         }
 
-        private static void PrintHeader()
+        private static void PrintTrustHelp()
         {
-            c("■■■■■■■■■■■■■■■■■■■■■■■■■■■■ ■ ■■■■ ■  ■  ■  ■■■ ■     ■");
+            PrintTitle("Trust");
+            PrintHeader();
+
+            c(" > trust\n");
+            c(" <package>\t\tThe package to trust.");
+            c(" <private key file>\t\tThe ASCII-armored PGP private key file.");
+
+            c("\n ! ex: 'verify \"coolPlugin.opkg\" \"privateKey.asc\"'");
+            PrintFooter();
         }
 
-        private static void PrintFooter()
+        private static void PrintVerifyHelp()
         {
-            c("■■■■■■■■■■■■■■■■■■■■■■■■■■■■ ■ ■■■■ ■  ■■■ ");
+            PrintTitle("Verify");
+            PrintHeader();
+
+            c(" > verify\n");
+            c(" <package>\t\tThe package to verify.");
+
+            c("\n ! ex: 'verify \"coolPlugin.opkg\"'");
+            PrintFooter();
         }
+
+        private static void PrintVerifyTrustHelp()
+        {
+            PrintTitle("Verify-Trust");
+            PrintHeader();
+
+            c(" > verify-trust\n");
+            c(" <package>\t\tThe package to verify.");
+
+            c("\n ! ex: 'verify-trust \"coolPlugin.opkg\"'");
+            PrintFooter();
+        }
+
+        #endregion Private Methods
     }
 }
