@@ -8,7 +8,7 @@ namespace OpenIIoT.Packager
     {
         #region Public Methods
 
-        public static PackageManifest GenerateManifest(string directory = default(string), bool includeResources = default(bool), bool hashFiles = default(bool))
+        public static PackageManifest GenerateManifest(string directory = default(string), bool includeResources = false, bool hashFiles = false)
         {
             PackageManifestBuilder builder = new PackageManifestBuilder();
 
@@ -24,26 +24,7 @@ namespace OpenIIoT.Packager
 
                     foreach (string file in Directory.GetFiles(directory, "*", SearchOption.AllDirectories))
                     {
-                        PackageManifestFileType type = Utility.GetFileType(file);
-
-                        if (type == PackageManifestFileType.Binary || type == PackageManifestFileType.WebIndex || (type == PackageManifestFileType.Resource && includeResources))
-                        {
-                            Console.WriteLine($"Adding '{file}'...");
-                            PackageManifestFile newFile = new PackageManifestFile();
-
-                            newFile.Source = Utility.GetRelativePath(directory, file);
-
-                            if (type == PackageManifestFileType.Binary || hashFiles)
-                            {
-                                newFile.Hash = "[deferred]";
-                            }
-
-                            builder.AddFile(type, newFile);
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Skipping file '{file}...");
-                        }
+                        AddFile(builder, file, directory, includeResources, hashFiles);
                     }
                 }
                 else
@@ -58,5 +39,33 @@ namespace OpenIIoT.Packager
         }
 
         #endregion Public Methods
+
+        #region Private Methods
+
+        private static void AddFile(PackageManifestBuilder builder, string file, string directory, bool includeResources, bool hashFiles)
+        {
+            PackageManifestFileType type = Utility.GetFileType(file);
+
+            if (type == PackageManifestFileType.Binary || type == PackageManifestFileType.WebIndex || (type == PackageManifestFileType.Resource && includeResources))
+            {
+                Console.WriteLine($"Adding '{file}'...");
+                PackageManifestFile newFile = new PackageManifestFile();
+
+                newFile.Source = Utility.GetRelativePath(directory, file);
+
+                if (type == PackageManifestFileType.Binary || hashFiles)
+                {
+                    newFile.Hash = "[deferred]";
+                }
+
+                builder.AddFile(type, newFile);
+            }
+            else
+            {
+                Console.WriteLine($"Skipping file '{file}...");
+            }
+        }
+
+        #endregion Private Methods
     }
 }

@@ -58,8 +58,8 @@
       <HintPath>..\packages\Utility.BigFont.2.1.2\lib\Utility.BigFont.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Utility.CommandLine.Arguments, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Utility.CommandLine.Arguments.1.2.1\lib\Utility.CommandLine.Arguments.dll</HintPath>
+    <Reference Include="Utility.CommandLine.Arguments, Version=1.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Utility.CommandLine.Arguments.1.2.2\lib\Utility.CommandLine.Arguments.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Utility.PGPSignatureTools, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
