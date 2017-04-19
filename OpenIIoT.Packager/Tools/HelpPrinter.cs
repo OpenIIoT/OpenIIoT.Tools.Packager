@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Utility.BigFont;
 
-namespace OpenIIoT.Packager
+namespace OpenIIoT.Packager.Tools
 {
     public static class HelpPrinter
     {

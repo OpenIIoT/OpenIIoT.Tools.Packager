@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace OpenIIoT.Packager
+namespace OpenIIoT.Packager.Tools
 {
     public static class ManifestGenerator
     {

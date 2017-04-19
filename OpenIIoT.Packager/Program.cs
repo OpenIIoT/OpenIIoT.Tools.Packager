@@ -1,37 +1,99 @@
-﻿using OpenIIoT.SDK.Package.Manifest;
+﻿/*
+      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀  ▀  ▀      ▀▀
+      █
+      █      ▄███████▄
+      █     ███    ███
+      █     ███    ███    █████  ██████     ▄████▄     █████   ▄█████     ▄▄██▄▄▄
+      █     ███    ███   ██  ██ ██    ██   ██    ▀    ██  ██   ██   ██  ▄█▀▀██▀▀█▄
+      █   ▀█████████▀   ▄██▄▄█▀ ██    ██  ▄██        ▄██▄▄█▀   ██   ██  ██  ██  ██
+      █     ███        ▀███████ ██    ██ ▀▀██ ███▄  ▀███████ ▀████████  ██  ██  ██
+      █     ███          ██  ██ ██    ██   ██    ██   ██  ██   ██   ██  ██  ██  ██
+      █    ▄████▀        ██  ██  ██████    ██████▀    ██  ██   ██   █▀   █  ██  █
+      █
+ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ▄▄  ▄▄ ▄▄   ▄▄▄▄ ▄▄     ▄▄     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ▄ ▄
+ █████████████████████████████████████████████████████████████ ███████████████ ██  ██ ██   ████ ██     ██     ████████████████ █ █
+      ▄
+      █  The main Application class.
+      █
+      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀▀▀▀▀▀▀▀▀ ▀ ▀▀▀     ▀▀               ▀
+      █  The GNU Affero General Public License (GNU AGPL)
+      █
+      █  Copyright (C) 2017 JP Dillingham (jp@dillingham.ws)
+      █
+      █  This program is free software: you can redistribute it and/or modify
+      █  it under the terms of the GNU Affero General Public License as published by
+      █  the Free Software Foundation, either version 3 of the License, or
+      █  (at your option) any later version.
+      █
+      █  This program is distributed in the hope that it will be useful,
+      █  but WITHOUT ANY WARRANTY; without even the implied warranty of
+      █  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      █  GNU Affero General Public License for more details.
+      █
+      █  You should have received a copy of the GNU Affero General Public License
+      █  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+      █
+      ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀  ▀▀ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀██
+                                                                                                   ██
+                                                                                               ▀█▄ ██ ▄█▀
+                                                                                                 ▀████▀
+                                                                                                   ▀▀                            */
+
 using System;
-using Utility.CommandLine;
-using System.IO;
 using System.Collections.Generic;
-using Utility.BigFont;
+using System.IO;
+using OpenIIoT.Packager.Tools;
+using OpenIIoT.SDK.Package.Manifest;
+using Utility.CommandLine;
 
 namespace OpenIIoT.Packager
 {
+    /// <summary>
+    ///     The main Application class.
+    /// </summary>
     internal class Program
     {
         #region Private Properties
 
+        /// <summary>
+        ///     Gets or sets a value indicating whether files are hashed when generating a manifest.
+        /// </summary>
         [Argument('h', "hash-files")]
         private static bool HashFiles { get; set; }
 
+        /// <summary>
+        ///     Gets or sets a help topic; used in lieu of the "help" command.
+        /// </summary>
         [Argument('?', "help")]
         private static string Help { get; set; }
 
+        /// <summary>
+        ///     Gets or sets a value indicating whether resource files are included when generating a manifest.
+        /// </summary>
         [Argument('i', "include-resources")]
         private static bool IncludeResources { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the input directory for manifest and package generation.
+        /// </summary>
         [Argument('d', "directory")]
         private static string InputDirectory { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the input manifest for package generation.
+        /// </summary>
         [Argument('m', "manifest")]
-        private static string Manifest { get; set; }
+        private static string ManifestFile { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the list of command line operands.
+        /// </summary>
         [Operands]
         private static List<string> Operands { get; set; }
 
-        [Argument('o', "output")]
-        private static string OutputFile { get; set; }
-
+        /// <summary>
+        ///     Gets or sets the package for package generation, signing, and verification.
+        /// </summary>
         [Argument('p', "package")]
         private static string Package { get; set; }
 
@@ -39,6 +101,16 @@ namespace OpenIIoT.Packager
 
         #region Private Methods
 
+        /// <summary>
+        ///     The main entry point for the Application.
+        /// </summary>
+        /// <remarks>
+        ///     The command line arguments are expected to start with an operand consisting of an application command, followed by
+        ///     zero or more arguments and/or operands associated with the specified command. A complete list of commands and
+        ///     arguments can be viewed in the <see cref="Tools.HelpPrinter"/> class, or via the command line by specifying the
+        ///     "help" command.
+        /// </remarks>
+        /// <param name="args">Command line arguments.</param>
         public static void Main(string[] args)
         {
             Arguments.Populate();
@@ -60,17 +132,17 @@ namespace OpenIIoT.Packager
             {
                 PackageManifest manifest = ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles);
 
-                if (OutputFile != default(string))
+                if (ManifestFile != default(string))
                 {
                     try
                     {
-                        Console.WriteLine($"Saving output to file {OutputFile}...");
-                        File.WriteAllText(OutputFile, manifest.ToJson());
+                        Console.WriteLine($"Saving output to file {ManifestFile}...");
+                        File.WriteAllText(ManifestFile, manifest.ToJson());
                         Console.WriteLine("File saved successfully.");
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Unable to write to output file '{OutputFile}': {ex.Message}");
+                        Console.WriteLine($"Unable to write to output file '{ManifestFile}': {ex.Message}");
                     }
                 }
                 else
