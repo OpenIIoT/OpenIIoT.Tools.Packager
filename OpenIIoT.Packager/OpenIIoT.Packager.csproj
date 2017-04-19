@@ -68,8 +68,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HelpPrinter.cs" />
-    <Compile Include="ManifestGenerator.cs" />
+    <Compile Include="Tools\HelpPrinter.cs" />
+    <Compile Include="Tools\ManifestGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility.cs" />

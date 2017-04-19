@@ -64,7 +64,9 @@ namespace OpenIIoT.Packager
                 {
                     try
                     {
+                        Console.WriteLine($"Saving output to file {OutputFile}...");
                         File.WriteAllText(OutputFile, manifest.ToJson());
+                        Console.WriteLine("File saved successfully.");
                     }
                     catch (Exception ex)
                     {
@@ -73,7 +75,7 @@ namespace OpenIIoT.Packager
                 }
                 else
                 {
-                    Console.Write(manifest.ToJson());
+                    Console.Write("\n" + manifest.ToJson());
                 }
             }
             else if (command == "package")
