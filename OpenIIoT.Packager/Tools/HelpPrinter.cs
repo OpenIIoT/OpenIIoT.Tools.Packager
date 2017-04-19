@@ -1,24 +1,79 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿/*
+      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀  ▀  ▀      ▀▀
+      █
+      █      ▄█    █▄                                    ▄███████▄
+      █     ███    ███                                  ███    ███
+      █     ███    ███      ▄█████  █          █████▄   ███    ███    █████  █  ██▄▄▄▄      ██       ▄█████    █████
+      █    ▄███▄▄▄▄███▄▄   ██   █  ██         ██   ██   ███    ███   ██  ██ ██  ██▀▀▀█▄ ▀███████▄   ██   █    ██  ██
+      █   ▀▀███▀▀▀▀███▀   ▄██▄▄    ██         ██   ██ ▀█████████▀   ▄██▄▄█▀ ██▌ ██   ██     ██  ▀  ▄██▄▄     ▄██▄▄█▀
+      █     ███    ███   ▀▀██▀▀    ██       ▀██████▀    ███        ▀███████ ██  ██   ██     ██    ▀▀██▀▀    ▀███████
+      █     ███    ███     ██   █  ██▌    ▄   ██        ███          ██  ██ ██  ██   ██     ██      ██   █    ██  ██
+      █     ███    █▀      ███████ ████▄▄██  ▄███▀     ▄████▀        ██  ██ █    █   █     ▄██▀     ███████   ██  ██
+      █
+ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ▄▄  ▄▄ ▄▄   ▄▄▄▄ ▄▄     ▄▄     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ▄ ▄
+ █████████████████████████████████████████████████████████████ ███████████████ ██  ██ ██   ████ ██     ██     ████████████████ █ █
+      ▄
+      █  Prints help messages for the Application to the console.
+      █
+      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀▀▀▀▀▀▀▀▀ ▀ ▀▀▀     ▀▀               ▀
+      █  The GNU Affero General Public License (GNU AGPL)
+      █
+      █  Copyright (C) 2017 JP Dillingham (jp@dillingham.ws)
+      █
+      █  This program is free software: you can redistribute it and/or modify
+      █  it under the terms of the GNU Affero General Public License as published by
+      █  the Free Software Foundation, either version 3 of the License, or
+      █  (at your option) any later version.
+      █
+      █  This program is distributed in the hope that it will be useful,
+      █  but WITHOUT ANY WARRANTY; without even the implied warranty of
+      █  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      █  GNU Affero General Public License for more details.
+      █
+      █  You should have received a copy of the GNU Affero General Public License
+      █  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+      █
+      ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀  ▀▀ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀██
+                                                                                                   ██
+                                                                                               ▀█▄ ██ ▄█▀
+                                                                                                 ▀████▀
+                                                                                                   ▀▀                            */
+
+using System;
 using Utility.BigFont;
 
 namespace OpenIIoT.Packager.Tools
 {
+    /// <summary>
+    ///     Prints help messages for the Application to the console.
+    /// </summary>
     public static class HelpPrinter
     {
         #region Private Fields
 
-        private static Action Break = () => Console.WriteLine("   │");
-        private static Action<string> Prefixed = (s) => Console.WriteLine("   │ " + s);
-        private static Action<string> Spaced = (s) => Console.WriteLine("   " + s);
+        /// <summary>
+        ///     Shorthand method for line breaks.
+        /// </summary>
+        private static Action lineBreak = () => Console.WriteLine("   │");
+
+        /// <summary>
+        ///     Shorthand method for prefixed messages.
+        /// </summary>
+        private static Action<string> prefixed = (s) => Console.WriteLine("   │ " + s);
+
+        /// <summary>
+        ///     Shorthand method for spaced (but not prefixed) messages.
+        /// </summary>
+        private static Action<string> spaced = (s) => Console.WriteLine("   " + s);
 
         #endregion Private Fields
 
         #region Public Methods
 
+        /// <summary>
+        ///     Prints the help message for the specified command, or a list of commands if a null or invalid command is specified.
+        /// </summary>
+        /// <param name="command">The command for which the help message is to be printed.</param>
         public static void PrintHelp(string command = default(string))
         {
             switch (command)
@@ -57,86 +112,108 @@ namespace OpenIIoT.Packager.Tools
 
         #region Private Methods
 
+        /// <summary>
+        ///     Prints a list of available commands.
+        /// </summary>
         private static void PrintCommands()
         {
             PrintTitle("Commands");
             PrintHeader();
 
-            Prefixed("> manifest\t\tGenerate a package manifest file.");
-            Prefixed("> package\t\tCreate a package file.");
-            Prefixed("> sign\t\tDigitally sign a package file.");
-            Prefixed("> verify\t\tVerify the integrity of a package file.");
-            Prefixed("> trust\t\tAdd a trust to a signed package file.");
-            Prefixed("> verify-trust\tVerify a trusted package file.");
+            prefixed("> manifest\t\tGenerate a package manifest file.");
+            prefixed("> package\t\tCreate a package file.");
+            prefixed("> sign\t\tDigitally sign a package file.");
+            prefixed("> verify\t\tVerify the integrity of a package file.");
+            prefixed("> trust\t\tAdd a trust to a signed package file.");
+            prefixed("> verify-trust\tVerify a trusted package file.");
 
-            Break();
-            Prefixed("! use 'help <command>' to get more details about that command.");
+            lineBreak();
+            prefixed("! use 'help <command>' to get more details about that command.");
 
             PrintFooter();
         }
 
+        /// <summary>
+        ///     Prints a section footer.
+        /// </summary>
         private static void PrintFooter()
         {
-            Spaced("└───────────────────── ── ─────────────── ─── ─ ─  ─   ─");
+            spaced("└───────────────────── ── ─────────────── ─── ─ ─  ─   ─");
         }
 
+        /// <summary>
+        ///     Prints a section header.
+        /// </summary>
         private static void PrintHeader()
         {
-            Spaced("┌─────────────────────── ─ ─── ───────────────────── ── ───── ─ ───   ──");
+            spaced("┌─────────────────────── ─ ─── ───────────────────── ── ───── ─ ───   ──");
         }
 
+        /// <summary>
+        ///     Prints the help message for the "manifest" command.
+        /// </summary>
         private static void PrintManifestHelp()
         {
             PrintTitle("Manifest");
             PrintHeader();
 
-            Prefixed("> manifest");
-            Break();
+            prefixed("> manifest");
+            lineBreak();
 
-            Prefixed("[-h|--hash]\t\t\tMarks files to be hashed during packaging.");
-            Prefixed("[-i|--include-resources]\t\tIncludes non-binary/web files.");
-            Prefixed("[-d|--directory <directory>]\tDirectory containing payload files.");
-            Prefixed("[-o|--output <file>]\t\tOutput manifest file.");
+            prefixed("[-h|--hash]\t\t\tMarks files to be hashed during packaging.");
+            prefixed("[-i|--include-resources]\t\tIncludes non-binary/web files.");
+            prefixed("[-d|--directory <directory>]\tDirectory containing payload files.");
+            prefixed("[-o|--output <file>]\t\tOutput manifest file.");
 
-            Break();
-            Prefixed("! ex: 'manifest -hi -d \"desktop\\coolPlugin\" -o \"manifest.json\"'");
+            lineBreak();
+            prefixed("! ex: 'manifest -hi -d \"desktop\\coolPlugin\" -o \"manifest.json\"'");
             PrintFooter();
         }
 
+        /// <summary>
+        ///     Prints the help message for the "package" command.
+        /// </summary>
         private static void PrintPackageHelp()
         {
             PrintTitle("Package");
             PrintHeader();
 
-            Prefixed("> package");
-            Break();
+            prefixed("> package");
+            lineBreak();
 
-            Prefixed("<directory>\tDirectory containing payload files.");
-            Prefixed("<manifest>\t\tThe manifest for the package (manifest.json, generate with 'manifest')");
-            Prefixed("<output file>\tOutput package file (*.opkg).");
+            prefixed("<directory>\tDirectory containing payload files.");
+            prefixed("<manifest>\t\tThe manifest for the package (manifest.json, generate with 'manifest')");
+            prefixed("<output file>\tOutput package file (*.opkg).");
 
-            Break();
-            Prefixed("! ex: 'package \"desktop\\coolPlugin\" \"manifest.json\" \"coolPlugin.opkg\"'");
+            lineBreak();
+            prefixed("! ex: 'package \"desktop\\coolPlugin\" \"manifest.json\" \"coolPlugin.opkg\"'");
             PrintFooter();
         }
 
+        /// <summary>
+        ///     Prints the help message for the "sign" command.
+        /// </summary>
         private static void PrintSignHelp()
         {
             PrintTitle("Sign");
             PrintHeader();
 
-            Prefixed("> sign");
-            Break();
+            prefixed("> sign");
+            lineBreak();
 
-            Prefixed("<package>\t\tThe package to sign.");
-            Prefixed("<public key file>\tThe ASCII-armored PGP public key file.");
-            Prefixed("<private key file>\tThe ASCII-armored PGP private key file.");
+            prefixed("<package>\t\tThe package to sign.");
+            prefixed("<public key file>\tThe ASCII-armored PGP public key file.");
+            prefixed("<private key file>\tThe ASCII-armored PGP private key file.");
 
-            Break();
-            Prefixed("! ex: 'sign \"coolPlugin.opkg\" \"publicKey.asc\" \"privateKey.asc\"");
+            lineBreak();
+            prefixed("! ex: 'sign \"coolPlugin.opkg\" \"publicKey.asc\" \"privateKey.asc\"");
             PrintFooter();
         }
 
+        /// <summary>
+        ///     Prints a section title for the specified command.
+        /// </summary>
+        /// <param name="title">The desired title.</param>
         private static void PrintTitle(string title)
         {
             string[] lines = BigFontGenerator.Generate(title, Font.Graffiti, FontSize.Small);
@@ -149,49 +226,58 @@ namespace OpenIIoT.Packager.Tools
             }
         }
 
+        /// <summary>
+        ///     Prints the help message for the "trust" command.
+        /// </summary>
         private static void PrintTrustHelp()
         {
             PrintTitle("Trust");
             PrintHeader();
 
-            Prefixed("> trust");
-            Break();
+            prefixed("> trust");
+            lineBreak();
 
-            Prefixed("<package>\t\tThe package to trust.");
-            Prefixed("<private key file>\tThe ASCII-armored PGP private key file.");
+            prefixed("<package>\t\tThe package to trust.");
+            prefixed("<private key file>\tThe ASCII-armored PGP private key file.");
 
-            Break();
-            Prefixed("! ex: 'verify \"coolPlugin.opkg\" \"privateKey.asc\"'");
+            lineBreak();
+            prefixed("! ex: 'verify \"coolPlugin.opkg\" \"privateKey.asc\"'");
             PrintFooter();
         }
 
+        /// <summary>
+        ///     Prints the help message for the "verify" command.
+        /// </summary>
         private static void PrintVerifyHelp()
         {
             PrintTitle("Verify");
             PrintHeader();
 
-            Prefixed("> verify");
-            Break();
+            prefixed("> verify");
+            lineBreak();
 
-            Prefixed("<package>\t\tThe package to verify.");
+            prefixed("<package>\t\tThe package to verify.");
 
-            Break();
-            Prefixed("! ex: 'verify \"coolPlugin.opkg\"'");
+            lineBreak();
+            prefixed("! ex: 'verify \"coolPlugin.opkg\"'");
             PrintFooter();
         }
 
+        /// <summary>
+        ///     Prints the help message for the "verify-trust" command.
+        /// </summary>
         private static void PrintVerifyTrustHelp()
         {
             PrintTitle("Verify-Trust");
             PrintHeader();
 
-            Prefixed("> verify-trust");
-            Break();
+            prefixed("> verify-trust");
+            lineBreak();
 
-            Prefixed("<package>\t\tThe package to verify.");
+            prefixed("<package>\t\tThe package to verify.");
 
-            Break();
-            Prefixed("! ex: 'verify-trust \"coolPlugin.opkg\"'");
+            lineBreak();
+            prefixed("! ex: 'verify-trust \"coolPlugin.opkg\"'");
             PrintFooter();
         }
 
