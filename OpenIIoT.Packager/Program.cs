@@ -1,111 +1,216 @@
-﻿using OpenIIoT.SDK.Package.Manifest;
+﻿/*
+      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀  ▀  ▀      ▀▀
+      █
+      █      ▄███████▄
+      █     ███    ███
+      █     ███    ███    █████  ██████     ▄████▄     █████   ▄█████     ▄▄██▄▄▄
+      █     ███    ███   ██  ██ ██    ██   ██    ▀    ██  ██   ██   ██  ▄█▀▀██▀▀█▄
+      █   ▀█████████▀   ▄██▄▄█▀ ██    ██  ▄██        ▄██▄▄█▀   ██   ██  ██  ██  ██
+      █     ███        ▀███████ ██    ██ ▀▀██ ███▄  ▀███████ ▀████████  ██  ██  ██
+      █     ███          ██  ██ ██    ██   ██    ██   ██  ██   ██   ██  ██  ██  ██
+      █    ▄████▀        ██  ██  ██████    ██████▀    ██  ██   ██   █▀   █  ██  █
+      █
+ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ▄▄  ▄▄ ▄▄   ▄▄▄▄ ▄▄     ▄▄     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ▄ ▄
+ █████████████████████████████████████████████████████████████ ███████████████ ██  ██ ██   ████ ██     ██     ████████████████ █ █
+      ▄
+      █  The main Application class.
+      █
+      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀▀▀▀▀▀▀▀▀ ▀ ▀▀▀     ▀▀               ▀
+      █  The GNU Affero General Public License (GNU AGPL)
+      █
+      █  Copyright (C) 2017 JP Dillingham (jp@dillingham.ws)
+      █
+      █  This program is free software: you can redistribute it and/or modify
+      █  it under the terms of the GNU Affero General Public License as published by
+      █  the Free Software Foundation, either version 3 of the License, or
+      █  (at your option) any later version.
+      █
+      █  This program is distributed in the hope that it will be useful,
+      █  but WITHOUT ANY WARRANTY; without even the implied warranty of
+      █  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      █  GNU Affero General Public License for more details.
+      █
+      █  You should have received a copy of the GNU Affero General Public License
+      █  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+      █
+      ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀  ▀▀ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀██
+                                                                                                   ██
+                                                                                               ▀█▄ ██ ▄█▀
+                                                                                                 ▀████▀
+                                                                                                   ▀▀                            */
+
 using System;
-using Utility.CommandLine;
-using System.IO;
-using System.Security.Cryptography;
 using System.Collections.Generic;
-using System.Text;
+using System.IO;
+using OpenIIoT.Packager.Tools;
+using OpenIIoT.SDK.Package.Manifest;
+using Utility.CommandLine;
 
 namespace OpenIIoT.Packager
 {
+    /// <summary>
+    ///     The main Application class.
+    /// </summary>
     internal class Program
     {
         #region Private Properties
 
-        [Argument('d', "directory")]
-        private static string InputDirectory { get; set; }
+        /// <summary>
+        ///     Gets or sets a value indicating whether files are hashed when generating a manifest.
+        /// </summary>
+        [Argument('h', "hash-files")]
+        private static bool HashFiles { get; set; }
 
+        /// <summary>
+        ///     Gets or sets a help topic; used in lieu of the "help" command.
+        /// </summary>
+        [Argument('?', "help")]
+        private static string Help { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether resource files are included when generating a manifest.
+        /// </summary>
         [Argument('i', "include-resources")]
         private static bool IncludeResources { get; set; }
 
-        [Argument('h', "hash")]
-        private static bool Hash { get; set; }
+        /// <summary>
+        ///     Gets or sets the input directory for manifest and package generation.
+        /// </summary>
+        [Argument('d', "directory")]
+        private static string InputDirectory { get; set; }
 
-        [Argument('g', "generate-manifest")]
-        private static bool GenerateManifest { get; set; }
+        /// <summary>
+        ///     Gets or sets the input manifest for package generation.
+        /// </summary>
+        [Argument('m', "manifest")]
+        private static string ManifestFile { get; set; }
 
-        [Argument('o', "output")]
-        private static string OutputFile { get; set; }
-
+        /// <summary>
+        ///     Gets or sets the list of command line operands.
+        /// </summary>
         [Operands]
-        private static string[] Operands { get; set; }
+        private static List<string> Operands { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the package for package generation, signing, and verification.
+        /// </summary>
         [Argument('p', "package")]
-        private static bool Package { get; set; }
+        private static string PackageFile { get; set; }
 
         #endregion Private Properties
 
         #region Private Methods
 
-        public static PackageManifest GenerateDefaultManifest(string directory = default(string), bool includeResources = default(bool), bool hash = default(bool))
-        {
-            PackageManifestBuilder builder = new PackageManifestBuilder();
-            builder.BuildDefault();
-
-            if (directory != default(string) && directory != string.Empty)
-            {
-                if (Directory.Exists(directory))
-                {
-                    Console.WriteLine($"Adding files from '{directory}'...");
-
-                    foreach (string file in Directory.GetFiles(directory, "*", SearchOption.AllDirectories))
-                    {
-                        PackageManifestFileType type = Utility.GetFileType(file);
-
-                        if (type == PackageManifestFileType.Binary || type == PackageManifestFileType.WebIndex || (type == PackageManifestFileType.Resource && includeResources))
-                        {
-                            Console.WriteLine($"Adding '{file}'...");
-                            PackageManifestFile newFile = new PackageManifestFile();
-
-                            newFile.Type = type;
-                            newFile.Source = Utility.GetRelativePath(directory, file);
-
-                            if (hash)
-                            {
-                                newFile.Hash = Utility.GetFileSHA512Hash(file);
-                            }
-
-                            builder.AddFile(newFile);
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Skipping file '{file}...");
-                        }
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"Couldn't find input directory '{directory}'.");
-                }
-            }
-
-            return builder.Manifest;
-        }
-
+        /// <summary>
+        ///     The main entry point for the Application.
+        /// </summary>
+        /// <remarks>
+        ///     The command line arguments are expected to start with an operand consisting of an application command, followed by
+        ///     zero or more arguments and/or operands associated with the specified command. A complete list of commands and
+        ///     arguments can be viewed in the <see cref="Tools.HelpPrinter"/> class, or via the command line by specifying the
+        ///     "help" command.
+        /// </remarks>
+        /// <param name="args">Command line arguments.</param>
         public static void Main(string[] args)
         {
             Arguments.Populate();
 
-            if (GenerateManifest)
-            {
-                PackageManifest manifest = GenerateDefaultManifest(InputDirectory, IncludeResources, Hash);
+            string command = "help";
 
-                if (OutputFile != default(string))
+            if (Operands.Count > 1)
+            {
+                command = Operands[1].ToLower();
+            }
+
+            if (Help != default(string))
+            {
+                HelpPrinter.PrintHelp(Help);
+                return;
+            }
+
+            try
+            {
+                if (command == "manifest")
                 {
-                    try
+                    if (InputDirectory != default(string) && !Directory.Exists(InputDirectory))
                     {
-                        File.WriteAllText(OutputFile, manifest.ToJson());
+                        throw new DirectoryNotFoundException($"The specified directory '{InputDirectory}' could not be found.");
                     }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Unable to write to output file '{OutputFile}'");
-                    }
+
+                    Manifest();
                 }
-                else
+                else if (command == "package")
                 {
-                    Console.Write(manifest.ToJson());
+                    if (InputDirectory == default(string))
+                    {
+                        throw new ArgumentNullException("directory");
+                    }
+                    if (!Directory.Exists(InputDirectory))
+                    {
+                        throw new DirectoryNotFoundException($"The specified directory '{InputDirectory}' could not be found.");
+                    }
+                    if (ManifestFile == default(string))
+                    {
+                        throw new ArgumentNullException("The required argument 'manifest' (-m|--manifest) was not supplied.");
+                    }
+                    if (!File.Exists(ManifestFile))
+                    {
+                        throw new FileNotFoundException($"The specified file '{ManifestFile}' could not be found.");
+                    }
+
+                    Package();
+                }
+                else if (command == "sign")
+                {
+                }
+                else if (command == "verify")
+                {
+                }
+                else if (command == "create-trust")
+                {
+                }
+                else if (command == "verify-trust")
+                {
+                }
+                else if (command == "help")
+                {
+                    HelpPrinter.PrintHelp(Operands.Count > 2 ? Operands[2] : default(string));
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}.  Please check your input (use 'help', --help or -? to review options).");
+            }
+        }
+
+        private static void Manifest()
+        {
+            PackageManifest manifest = ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles);
+
+            if (ManifestFile != default(string))
+            {
+                try
+                {
+                    Console.WriteLine($"Saving output to file {ManifestFile}...");
+                    File.WriteAllText(ManifestFile, manifest.ToJson());
+                    Console.WriteLine("File saved successfully.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Unable to write to output file '{ManifestFile}': {ex.Message}");
+                }
+            }
+            else
+            {
+                Console.Write("\n" + manifest.ToJson());
+            }
+        }
+
+        private static void Package()
+        {
+            Console.WriteLine($"Creating package '{PackageFile}' from payload directory '{InputDirectory}' using manifest '{ManifestFile}'...");
+            PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile);
+            Console.WriteLine("Package created successfully.");
         }
     }
 
