@@ -160,9 +160,9 @@ namespace OpenIIoT.Packager.Tools
             prefixed("> manifest");
             lineBreak();
 
-            prefixed("[-h|--hash]\t\t\tMarks files to be hashed during packaging.");
-            prefixed("[-i|--include-resources]\t\tIncludes non-binary/web files.");
             prefixed("[-d|--directory <directory>]\tDirectory containing payload files.");
+            prefixed("[-i|--include-resources]\t\tIncludes non-binary/web files.");
+            prefixed("[-h|--hash]\t\t\tMarks files to be hashed during packaging.");
             prefixed("[-o|--output <file>]\t\tOutput manifest file.");
 
             lineBreak();
