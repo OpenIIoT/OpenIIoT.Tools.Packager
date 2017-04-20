@@ -128,55 +128,58 @@ namespace OpenIIoT.Packager
                 return;
             }
 
-            if (command == "manifest")
+            try
             {
-                if (InputDirectory == default(string))
+                if (command == "manifest")
                 {
-                    throw new ArgumentNullException("The required argument 'directory' (-d|--directory) was not supplied.");
-                }
-                if (!Directory.Exists(InputDirectory))
-                {
-                    throw new DirectoryNotFoundException($"The specified directory '{InputDirectory}' could not be found.");
-                }
+                    if (InputDirectory != default(string) && !Directory.Exists(InputDirectory))
+                    {
+                        throw new DirectoryNotFoundException($"The specified directory '{InputDirectory}' could not be found.");
+                    }
 
-                Manifest();
-            }
-            else if (command == "package")
-            {
-                if (InputDirectory == default(string))
-                {
-                    throw new ArgumentNullException("The required argument 'directory' (-d|--directory) was not supplied.");
+                    Manifest();
                 }
-                if (!Directory.Exists(InputDirectory))
+                else if (command == "package")
                 {
-                    throw new DirectoryNotFoundException($"The specified directory '{InputDirectory}' could not be found.");
-                }
-                if (ManifestFile == default(string))
-                {
-                    throw new ArgumentNullException("The required argument 'manifest' (-m|--manifest) was not supplied.");
-                }
-                if (!File.Exists(ManifestFile))
-                {
-                    throw new FileNotFoundException($"The specified file '{ManifestFile}' could not be found.");
-                }
+                    if (InputDirectory == default(string))
+                    {
+                        throw new ArgumentNullException("directory");
+                    }
+                    if (!Directory.Exists(InputDirectory))
+                    {
+                        throw new DirectoryNotFoundException($"The specified directory '{InputDirectory}' could not be found.");
+                    }
+                    if (ManifestFile == default(string))
+                    {
+                        throw new ArgumentNullException("The required argument 'manifest' (-m|--manifest) was not supplied.");
+                    }
+                    if (!File.Exists(ManifestFile))
+                    {
+                        throw new FileNotFoundException($"The specified file '{ManifestFile}' could not be found.");
+                    }
 
-                Package();
+                    Package();
+                }
+                else if (command == "sign")
+                {
+                }
+                else if (command == "verify")
+                {
+                }
+                else if (command == "create-trust")
+                {
+                }
+                else if (command == "verify-trust")
+                {
+                }
+                else if (command == "help")
+                {
+                    HelpPrinter.PrintHelp(Operands.Count > 2 ? Operands[2] : default(string));
+                }
             }
-            else if (command == "sign")
+            catch (Exception ex)
             {
-            }
-            else if (command == "verify")
-            {
-            }
-            else if (command == "create-trust")
-            {
-            }
-            else if (command == "verify-trust")
-            {
-            }
-            else if (command == "help")
-            {
-                HelpPrinter.PrintHelp(Operands.Count > 2 ? Operands[2] : default(string));
+                Console.WriteLine($"Error: {ex.Message}.  Please check your input (use 'help', --help or -? to review options).");
             }
         }
 
