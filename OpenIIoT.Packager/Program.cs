@@ -95,7 +95,7 @@ namespace OpenIIoT.Packager
         ///     Gets or sets the package for package generation, signing, and verification.
         /// </summary>
         [Argument('p', "package")]
-        private static string Package { get; set; }
+        private static string PackageFile { get; set; }
 
         #endregion Private Properties
 
@@ -130,28 +130,37 @@ namespace OpenIIoT.Packager
 
             if (command == "manifest")
             {
-                PackageManifest manifest = ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles);
+                if (InputDirectory == default(string))
+                {
+                    throw new ArgumentNullException("The required argument 'directory' (-d|--directory) was not supplied.");
+                }
+                if (!Directory.Exists(InputDirectory))
+                {
+                    throw new DirectoryNotFoundException($"The specified directory '{InputDirectory}' could not be found.");
+                }
 
-                if (ManifestFile != default(string))
-                {
-                    try
-                    {
-                        Console.WriteLine($"Saving output to file {ManifestFile}...");
-                        File.WriteAllText(ManifestFile, manifest.ToJson());
-                        Console.WriteLine("File saved successfully.");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Unable to write to output file '{ManifestFile}': {ex.Message}");
-                    }
-                }
-                else
-                {
-                    Console.Write("\n" + manifest.ToJson());
-                }
+                Manifest();
             }
             else if (command == "package")
             {
+                if (InputDirectory == default(string))
+                {
+                    throw new ArgumentNullException("The required argument 'directory' (-d|--directory) was not supplied.");
+                }
+                if (!Directory.Exists(InputDirectory))
+                {
+                    throw new DirectoryNotFoundException($"The specified directory '{InputDirectory}' could not be found.");
+                }
+                if (ManifestFile == default(string))
+                {
+                    throw new ArgumentNullException("The required argument 'manifest' (-m|--manifest) was not supplied.");
+                }
+                if (!File.Exists(ManifestFile))
+                {
+                    throw new FileNotFoundException($"The specified file '{ManifestFile}' could not be found.");
+                }
+
+                Package();
             }
             else if (command == "sign")
             {
@@ -169,6 +178,36 @@ namespace OpenIIoT.Packager
             {
                 HelpPrinter.PrintHelp(Operands.Count > 2 ? Operands[2] : default(string));
             }
+        }
+
+        private static void Manifest()
+        {
+            PackageManifest manifest = ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles);
+
+            if (ManifestFile != default(string))
+            {
+                try
+                {
+                    Console.WriteLine($"Saving output to file {ManifestFile}...");
+                    File.WriteAllText(ManifestFile, manifest.ToJson());
+                    Console.WriteLine("File saved successfully.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Unable to write to output file '{ManifestFile}': {ex.Message}");
+                }
+            }
+            else
+            {
+                Console.Write("\n" + manifest.ToJson());
+            }
+        }
+
+        private static void Package()
+        {
+            Console.WriteLine($"Creating package '{PackageFile}' from payload directory '{InputDirectory}' using manifest '{ManifestFile}'...");
+            PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile);
+            Console.WriteLine("Package created successfully.");
         }
     }
 
