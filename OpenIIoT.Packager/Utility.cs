@@ -39,12 +39,12 @@
                                                                                                  ▀████▀
                                                                                                    ▀▀                            */
 
-using Newtonsoft.Json;
-using OpenIIoT.SDK.Package.Manifest;
 using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using Newtonsoft.Json;
+using OpenIIoT.SDK.Package.Manifest;
 
 namespace OpenIIoT.Packager
 {
