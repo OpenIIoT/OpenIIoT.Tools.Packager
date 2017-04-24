@@ -145,14 +145,17 @@ namespace OpenIIoT.Packager
                     {
                         throw new ArgumentNullException("directory");
                     }
+
                     if (!Directory.Exists(InputDirectory))
                     {
                         throw new DirectoryNotFoundException($"The specified directory '{InputDirectory}' could not be found.");
                     }
+
                     if (ManifestFile == default(string))
                     {
                         throw new ArgumentNullException("The required argument 'manifest' (-m|--manifest) was not supplied.");
                     }
+
                     if (!File.Exists(ManifestFile))
                     {
                         throw new FileNotFoundException($"The specified file '{ManifestFile}' could not be found.");
