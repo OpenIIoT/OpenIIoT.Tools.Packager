@@ -132,36 +132,11 @@ namespace OpenIIoT.Packager
             {
                 if (command == "manifest")
                 {
-                    if (InputDirectory != default(string) && !Directory.Exists(InputDirectory))
-                    {
-                        throw new DirectoryNotFoundException($"The specified directory '{InputDirectory}' could not be found.");
-                    }
-
                     Manifest();
                 }
                 else if (command == "package")
                 {
-                    if (InputDirectory == default(string))
-                    {
-                        throw new ArgumentNullException("directory");
-                    }
-
-                    if (!Directory.Exists(InputDirectory))
-                    {
-                        throw new DirectoryNotFoundException($"The specified directory '{InputDirectory}' could not be found.");
-                    }
-
-                    if (ManifestFile == default(string))
-                    {
-                        throw new ArgumentNullException("The required argument 'manifest' (-m|--manifest) was not supplied.");
-                    }
-
-                    if (!File.Exists(ManifestFile))
-                    {
-                        throw new FileNotFoundException($"The specified file '{ManifestFile}' could not be found.");
-                    }
-
-                    Package();
+                    PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile);
                 }
                 else if (command == "sign")
                 {
@@ -182,12 +157,20 @@ namespace OpenIIoT.Packager
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}.  Please check your input (use 'help', --help or -? to review options).");
+                Console.WriteLine($"Error: {ex.Message}");
             }
         }
 
+        /// <summary>
+        ///     Generates a PackageManifest using the options passed to the application at run time.
+        /// </summary>
         private static void Manifest()
         {
+            if (InputDirectory != default(string) && !Directory.Exists(InputDirectory))
+            {
+                throw new DirectoryNotFoundException($"The specified directory '{InputDirectory}' could not be found.");
+            }
+
             PackageManifest manifest = ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles);
 
             if (ManifestFile != default(string))
@@ -209,11 +192,21 @@ namespace OpenIIoT.Packager
             }
         }
 
+        /// <summary>
+        ///     Creates a Package file using the options passed to the application at run time.
+        /// </summary>
         private static void Package()
         {
             Console.WriteLine($"Creating package '{PackageFile}' from payload directory '{InputDirectory}' using manifest '{ManifestFile}'...");
-            PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile);
+
             Console.WriteLine("Package created successfully.");
+        }
+
+        /// <summary>
+        ///     Signs a Package file
+        /// </summary>
+        private static void Sign()
+        {
         }
     }
 

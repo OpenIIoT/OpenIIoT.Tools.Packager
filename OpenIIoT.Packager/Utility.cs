@@ -117,6 +117,11 @@ namespace OpenIIoT.Packager
         /// <returns>The path of the specified file, relative to the specified base directory.</returns>
         public static string GetRelativePath(string baseDirectory, string file)
         {
+            if (!baseDirectory.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                baseDirectory += Path.DirectorySeparatorChar;
+            }
+
             return file.Replace(baseDirectory, string.Empty);
         }
 
