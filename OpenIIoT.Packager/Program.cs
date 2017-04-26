@@ -193,16 +193,6 @@ namespace OpenIIoT.Packager
         }
 
         /// <summary>
-        ///     Creates a Package file using the options passed to the application at run time.
-        /// </summary>
-        private static void Package()
-        {
-            Console.WriteLine($"Creating package '{PackageFile}' from payload directory '{InputDirectory}' using manifest '{ManifestFile}'...");
-
-            Console.WriteLine("Package created successfully.");
-        }
-
-        /// <summary>
         ///     Signs a Package file
         /// </summary>
         private static void Sign()
