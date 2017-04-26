@@ -2,14 +2,13 @@
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("OpenIIoT.Packager")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A tool for the creation and management of OpenIIoT package files.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("OpenIIoT")]
 [assembly: AssemblyProduct("OpenIIoT.Packager")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyCopyright("Copyright (C) 2016-2017 JP Dillingham (jp@dillingham.ws)")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 [assembly: Guid("ebe1344b-38fd-4266-a5d9-06ad10fe0aee")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.0.*")]

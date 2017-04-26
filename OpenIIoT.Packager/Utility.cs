@@ -18,7 +18,7 @@
       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀▀▀▀▀▀▀▀▀ ▀ ▀▀▀     ▀▀               ▀
       █  The GNU Affero General Public License (GNU AGPL)
       █
-      █  Copyright (C) 2017 JP Dillingham (jp@dillingham.ws)
+      █  Copyright (C) 2016-2017 JP Dillingham (jp@dillingham.ws)
       █
       █  This program is free software: you can redistribute it and/or modify
       █  it under the terms of the GNU Affero General Public License as published by
@@ -117,6 +117,11 @@ namespace OpenIIoT.Packager
         /// <returns>The path of the specified file, relative to the specified base directory.</returns>
         public static string GetRelativePath(string baseDirectory, string file)
         {
+            if (!baseDirectory.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                baseDirectory += Path.DirectorySeparatorChar;
+            }
+
             return file.Replace(baseDirectory, string.Empty);
         }
 

@@ -29,6 +29,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>OpenIIoT.Packager.Tests.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Debug\OpenIIoT.Packager.Tests.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -76,7 +77,7 @@
     <None Include="app.config" />
     <None Include="OpenIIoT.Packager.Tests.ruleset" />
     <None Include="packages.config" />
-    <None Include="stylecop.json" />
+    <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIIoT.Packager\OpenIIoT.Packager.csproj">
