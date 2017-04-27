@@ -42,8 +42,10 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Text;
 using Newtonsoft.Json;
 using OpenIIoT.SDK.Package.Manifest;
+using Utility.PGPSignatureTools;
 
 namespace OpenIIoT.Packager.Tools
 {
@@ -60,12 +62,152 @@ namespace OpenIIoT.Packager.Tools
         /// <param name="inputDirectory">The directory containing the Package contents.</param>
         /// <param name="manifestFile">The PackageManifest file for the Package.</param>
         /// <param name="packageFile">The filename to which the Package file will be saved.</param>
-        public static void CreatePackage(string inputDirectory, string manifestFile, string packageFile)
+        /// <param name="signPackage">Indicates whether the package should be signed.</param>
+        /// <param name="privateKeyFile">The file containing the ASCII-armored PGP private key.</param>
+        /// <param name="passphrase">The passphrase for the private key.</param>
+        /// <param name="publicKeyFile">The file containing the ASCII-armored PGP public key.</param>
+        public static void CreatePackage(string inputDirectory, string manifestFile, string packageFile, bool signPackage, string privateKeyFile, string passphrase, string publicKeyFile)
         {
-            // validate input
-            if (inputDirectory == default(string))
+            ValidateInputDirectoryArgument(inputDirectory);
+            ValidatePackageFileArgument(packageFile);
+            ValidateSignatureArguments(signPackage, privateKeyFile, passphrase, publicKeyFile);
+
+            PackageManifest manifest = ValidateManifestFileArgumentAndRetrieveManifest(manifestFile);
+
+            // looks like: temp\OpenIIoT.Packager\<Guid>\
+            string tempDirectory = Path.Combine(Path.GetTempPath(), System.Reflection.Assembly.GetEntryAssembly().GetName().Name, Guid.NewGuid().ToString());
+            string payloadDirectory = Path.Combine(tempDirectory, SDK.Package.Constants.PayloadDirectoryName);
+            string payloadArchiveName = Path.Combine(tempDirectory, SDK.Package.Constants.PayloadArchiveName);
+            string tempPackageFileName = Path.Combine(tempDirectory, Path.GetFileName(packageFile));
+
+            try
             {
-                throw new ArgumentException($"The required argument 'directory' (-d|--directory) was not supplied.");
+                Console.WriteLine($"Creating temporary directory '{tempDirectory}'...");
+
+                Directory.CreateDirectory(tempDirectory);
+
+                Console.WriteLine("√ Directory created.");
+                Console.WriteLine($"Copying input directory '{inputDirectory}' to '{payloadDirectory}'...");
+
+                Microsoft.VisualBasic.FileIO.FileSystem.CopyDirectory(inputDirectory, payloadDirectory);
+
+                Console.WriteLine("√ Directory copied successfully.");
+                Console.WriteLine($"Validating manifest '{manifestFile}' and generating SHA512 hashes...");
+
+                ValidateManifestAndGenerateHashes(manifest, payloadDirectory);
+
+                Console.WriteLine("√ Manifest validated and hashes written.");
+                Console.WriteLine($"Compressing payload into '{payloadArchiveName}'...");
+
+                ZipFile.CreateFromDirectory(payloadDirectory, payloadArchiveName);
+
+                Console.WriteLine("√ Successfully compressed payload.");
+                Console.WriteLine($"Deleting temporary payload directory '{payloadDirectory}...");
+
+                Directory.Delete(payloadDirectory, true);
+
+                Console.WriteLine("√ Successfully deleted temporary payload directory.");
+                Console.WriteLine("Updating manifest with SHA512 hash of payload archive...");
+
+                manifest.Hash = Utility.GetFileSHA512Hash(payloadArchiveName);
+
+                Console.WriteLine($"√ Hash computed successfully: {manifest.Hash}.");
+
+                if (signPackage)
+                {
+                    manifest = SignManifest(manifest, privateKeyFile, passphrase, publicKeyFile);
+                }
+
+                Console.WriteLine($"Writing manifest to 'manifest.json' in '{tempDirectory}'...");
+
+                WriteManifest(manifest, tempDirectory);
+
+                Console.WriteLine("√ Manifest written successfully.");
+                Console.WriteLine($"Packaging manifest and payload into '{packageFile}'...");
+
+                ZipFile.CreateFromDirectory(tempDirectory, packageFile);
+
+                Console.WriteLine("√ Package created successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            finally
+            {
+                Console.WriteLine("Deleting temporary files...");
+
+                Directory.Delete(tempDirectory, true);
+
+                Console.WriteLine("√ Temporary files deleted successfully.");
+            }
+        }
+
+        #endregion Public Methods
+
+        #region Private Methods
+
+        /// <summary>
+        ///     Digitally signs the specified manifest, adds the signature to the manifest, and returns it.
+        /// </summary>
+        /// <param name="manifest">The manifest to sign.</param>
+        /// <param name="privateKeyFile">The file containing the PGP private key with which to sign the file.</param>
+        /// <param name="passphrase">The passphrase for the PGP private key.</param>
+        /// <param name="publicKeyFile">The file containing the PGP public key to insert into the signature.</param>
+        /// <returns>The signed manifest.</returns>
+        private static PackageManifest SignManifest(PackageManifest manifest, string privateKeyFile, string passphrase, string publicKeyFile)
+        {
+            Console.WriteLine("Digitally signing manifest...");
+            Console.WriteLine("Creating SHA512 hash of serialized manifest...");
+
+            string manifestHash = Utility.GetStringSHA512Hash(manifest.ToJson());
+
+            Console.WriteLine($"√ Hash computed successfully: {manifestHash}.");
+
+            Console.WriteLine("Reading keys from disk...");
+
+            string privateKey = File.ReadAllText(privateKeyFile);
+            string publicKey = File.ReadAllText(publicKeyFile);
+
+            Console.WriteLine("√ Keys read successfully.");
+
+            byte[] manifestBytes = Encoding.ASCII.GetBytes(manifest.ToJson());
+
+            Console.WriteLine("Creating digest...");
+
+            byte[] digestBytes = PGPSignature.Sign(manifestBytes, privateKey, passphrase);
+
+            Console.WriteLine("√ Digest created successfully.");
+
+            string digest = Encoding.ASCII.GetString(digestBytes);
+
+            Console.WriteLine("Adding signature to manifest...");
+
+            PackageManifestSignature signature = new PackageManifestSignature();
+            signature.Digest = digest;
+            signature.Key = publicKey;
+
+            manifest.Signature = signature;
+
+            Console.WriteLine("√ Manifest signed successfully.");
+
+            return manifest;
+        }
+
+        /// <summary>
+        ///     Validates the inputDirectory argument for <see cref="CreatePackage(string, string, string, bool, string, string, string)"/>.
+        /// </summary>
+        /// <param name="inputDirectory">The value specified for the inputDirectory argument.</param>
+        /// <exception cref="ArgumentException">Thrown when the directory is a default or null string.</exception>
+        /// <exception cref="DirectoryNotFoundException">
+        ///     Thrown when the directory can not be found on the local file system.
+        /// </exception>
+        /// <exception cref="FileNotFoundException">Thrown when the directory contains no files.</exception>
+        private static void ValidateInputDirectoryArgument(string inputDirectory)
+        {
+            if (inputDirectory == default(string) || inputDirectory == string.Empty)
+            {
+                throw new ArgumentException($"The required argument 'directory' (-d) was not supplied.");
             }
 
             if (!Directory.Exists(inputDirectory))
@@ -75,113 +217,8 @@ namespace OpenIIoT.Packager.Tools
 
             if (Directory.GetFiles(inputDirectory, "*", SearchOption.AllDirectories).Length == 0)
             {
-                throw new ArgumentException($"The specified directory '{inputDirectory}' is empty; Packages must contain at least one file.");
+                throw new FileNotFoundException($"The specified directory '{inputDirectory}' is empty; Packages must contain at least one file.");
             }
-
-            if (manifestFile == default(string))
-            {
-                throw new ArgumentException("The required argument 'manifest' (-m|--manifest) was not supplied.");
-            }
-
-            if (!File.Exists(manifestFile))
-            {
-                throw new FileNotFoundException($"The specified file '{manifestFile}' could not be found.");
-            }
-
-            // fetch and deserialize the PackageManifest from the specified file
-            PackageManifest manifest;
-
-            try
-            {
-                manifest = OpenPackageManifest(manifestFile);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"The specified manifest file '{manifestFile}' could not be opened: {ex.Message}");
-            }
-
-            if (packageFile == default(string))
-            {
-                throw new ArgumentException($"The required argument 'package' (-p|--package) was not supplied.");
-            }
-
-            try
-            {
-                File.WriteAllText(packageFile, "Hello World!");
-                File.Delete(packageFile);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"The specified package file '{packageFile}' could not be written: {ex.Message}");
-            }
-
-            // input validated. begin package creation.
-            string tempDirectory = Path.Combine(Path.GetTempPath(), System.Reflection.Assembly.GetEntryAssembly().GetName().Name, Guid.NewGuid().ToString());
-            string payloadDirectory = Path.Combine(tempDirectory, SDK.Package.Constants.PayloadDirectoryName);
-            string payloadArchiveName = Path.Combine(tempDirectory, SDK.Package.Constants.PayloadArchiveName);
-            string tempPackageFileName = Path.Combine(tempDirectory, Path.GetFileName(packageFile));
-
-            try
-            {
-                Console.WriteLine($"Creating temporary directory '{tempDirectory}'...");
-                Directory.CreateDirectory(tempDirectory);
-                Console.WriteLine($"√ Directory created.");
-
-                Console.WriteLine($"Copying input directory '{inputDirectory}' to '{payloadDirectory}'...");
-                Microsoft.VisualBasic.FileIO.FileSystem.CopyDirectory(inputDirectory, payloadDirectory);
-                Console.WriteLine($"√ Directory copied successfully.");
-
-                Console.WriteLine($"Validating manifest '{manifestFile}' and generating SHA512 hashes...");
-                ValidateManifestAndGenerateHashes(manifest, payloadDirectory);
-                Console.WriteLine($"√ Manifest validated and hashes written.");
-
-                Console.WriteLine($"Compressing payload into '{payloadArchiveName}'...");
-                ZipFile.CreateFromDirectory(payloadDirectory, payloadArchiveName);
-                Console.WriteLine($"√ Successfully compressed payload.");
-
-                Console.WriteLine($"Deleting temporary payload directory '{payloadDirectory}...");
-                Directory.Delete(payloadDirectory, true);
-                Console.WriteLine($"√ Successfully deleted temporary payload directory.");
-
-                Console.WriteLine($"Updating manifest with SHA512 hash of payload archive...");
-                manifest.Hash = Utility.GetFileSHA512Hash(payloadArchiveName);
-                Console.WriteLine($"√ Hash computed successfully: {manifest.Hash}.");
-
-                Console.WriteLine($"Writing manifest to 'manifest.json' in '{tempDirectory}'...");
-                WriteManifest(manifest, tempDirectory);
-                Console.WriteLine($"√ Manifest written successfully.");
-
-                Console.WriteLine($"Packaging manifest and payload into '{packageFile}'...");
-                ZipFile.CreateFromDirectory(tempDirectory, packageFile);
-                Console.WriteLine($"√ Package created successfully!");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
-            finally
-            {
-                Console.WriteLine($"Deleting temporary files...");
-                Directory.Delete(tempDirectory, true);
-                Console.WriteLine($"√ Temporary files deleted successfully.");
-            }
-        }
-
-        #endregion Public Methods
-
-        #region Private Methods
-
-        /// <summary>
-        ///     Reads the contents of the specified file and attempts to deserialize it to an instance of
-        ///     <see cref="PackageManifest"/> .
-        /// </summary>
-        /// <param name="manifestFile">The file from which the manifest is read.</param>
-        /// <returns>The deserialized content of the manifest file.</returns>
-        private static PackageManifest OpenPackageManifest(string manifestFile)
-        {
-            string manifestContents = File.ReadAllText(manifestFile);
-
-            return JsonConvert.DeserializeObject<PackageManifest>(manifestContents);
         }
 
         /// <summary>
@@ -208,6 +245,134 @@ namespace OpenIIoT.Packager.Tools
                     {
                         file.Hash = Utility.GetFileSHA512Hash(fileToCheck);
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Validates the manifestFile argument for
+        ///     <see cref="CreatePackage(string, string, string, bool, string, string, string)"/> and, if valid, retrieves the
+        ///     <see cref="PackageManifest"/> from the file and returns it.
+        /// </summary>
+        /// <param name="manifestFile">The value specified for the manifestFile argument.</param>
+        /// <returns>The PackageManifest file retrieved from the file specified in the manifestFile argument.</returns>
+        /// <exception cref="ArgumentException">Thrown when the manifest file is a default or null string.</exception>
+        /// <exception cref="FileNotFoundException">
+        ///     Thrown when the manifest file can not be found on the local file system.
+        /// </exception>
+        /// <exception cref="InvalidDataException">Thrown when the manifest file is empty.</exception>
+        /// <exception cref="FileLoadException">Thrown when the manifest file fails to be loaded or deserialized.</exception>
+        private static PackageManifest ValidateManifestFileArgumentAndRetrieveManifest(string manifestFile)
+        {
+            if (manifestFile == default(string) || manifestFile == string.Empty)
+            {
+                throw new ArgumentException("The required argument 'manifest' (-m) was not supplied.");
+            }
+
+            if (!File.Exists(manifestFile))
+            {
+                throw new FileNotFoundException($"The specified manifest file '{manifestFile}' could not be found.");
+            }
+
+            string manifestContents = File.ReadAllText(manifestFile);
+
+            if (manifestContents.Length == 0)
+            {
+                throw new InvalidDataException($"The specified manifests file '{manifestFile}' is empty.");
+            }
+
+            // fetch and deserialize the PackageManifest from the specified file
+            PackageManifest manifest;
+
+            try
+            {
+                manifest = JsonConvert.DeserializeObject<PackageManifest>(manifestContents);
+            }
+            catch (Exception ex)
+            {
+                throw new FileLoadException($"The specified manifest file '{manifestFile}' could not be opened: {ex.Message}");
+            }
+
+            return manifest;
+        }
+
+        /// <summary>
+        ///     Validates the packageFile argument for <see cref="CreatePackage(string, string, string, bool, string, string, string)"/>.
+        /// </summary>
+        /// <param name="packageFile">The value specified for the packageFile argument.</param>
+        /// <exception cref="ArgumentException">Thrown when the package file is a default or null string.</exception>
+        /// <exception cref="Exception">Thrown when the package file can not be written.</exception>
+        private static void ValidatePackageFileArgument(string packageFile)
+        {
+            if (packageFile == default(string) || packageFile == string.Empty)
+            {
+                throw new ArgumentException($"The required argument 'package' (-p|--package) was not supplied.");
+            }
+
+            try
+            {
+                File.WriteAllText(packageFile, "Hello World!");
+                File.Delete(packageFile);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"The specified package file '{packageFile}' could not be written: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        ///     Validates the signPackage, privateKeyFile and publicKeyFile arguments for
+        ///     <see cref="CreatePackage(string, string, string, bool, string, string, string)"/> and returns a value indicating
+        ///     whether the package should be signed.
+        /// </summary>
+        /// <param name="signPackage">The value specified for the signPackage argument.</param>
+        /// <param name="privateKeyFile">The value specified for the privateKeyFile argument.</param>
+        /// <param name="password">the value specified for the privateKeyPassword argument.</param>
+        /// <param name="publicKeyFile">The value specified for the publicKeyFile argument.</param>
+        /// <exception cref="ArgumentException">
+        ///     Thrown when the privateKeyFile, privateKeyPassword, or publicKeyFile arguments are a default or null string.
+        /// </exception>
+        /// <exception cref="FileNotFoundException">
+        ///     Thrown when the private or public key files can not be found on the local file system.
+        /// </exception>
+        /// <exception cref="InvalidDataException">Thrown when the private or public key files are empty.</exception>
+        private static void ValidateSignatureArguments(bool signPackage, string privateKeyFile, string password, string publicKeyFile)
+        {
+            if (signPackage)
+            {
+                if (privateKeyFile == default(string) || privateKeyFile == string.Empty)
+                {
+                    throw new ArgumentException($"The required argument 'private-key' (-r) was not supplied.");
+                }
+
+                if (!File.Exists(privateKeyFile))
+                {
+                    throw new FileNotFoundException($"The specified private key file '{privateKeyFile}' could not be found.");
+                }
+
+                if (File.ReadAllText(privateKeyFile).Length == 0)
+                {
+                    throw new InvalidDataException($"The specified private key file '{privateKeyFile}' is empty.");
+                }
+
+                if (password == default(string) || password == string.Empty)
+                {
+                    throw new ArgumentException($"The required argument 'private-key-password' (-r) was not supplied.");
+                }
+
+                if (publicKeyFile == default(string) || publicKeyFile == string.Empty)
+                {
+                    throw new ArgumentException($"The required argument 'public-key' (-r) was not supplied.");
+                }
+
+                if (!File.Exists(publicKeyFile))
+                {
+                    throw new FileNotFoundException($"The specified public key file '{publicKeyFile}' could not be found.");
+                }
+
+                if (File.ReadAllText(publicKeyFile).Length == 0)
+                {
+                    throw new InvalidDataException($"The specified public key file '{publicKeyFile}' is empty.");
                 }
             }
         }

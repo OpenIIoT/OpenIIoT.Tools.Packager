@@ -56,38 +56,50 @@ namespace OpenIIoT.Packager.Tools
         ///     Generates and populates <see cref="PackageManifest"/> objects from the specified directory, including resource
         ///     files and hashing file entries if those options are specified.
         /// </summary>
-        /// <param name="directory">The directory from which to generate a list of files.</param>
+        /// <param name="inputDirectory">The directory from which to generate a list of files.</param>
         /// <param name="includeResources">A value indicating whether resource files are to be added to the manifest.</param>
         /// <param name="hashFiles">A value indicating whether files added to the manifest are to include a SHA512 hash.</param>
-        /// <returns>The generated and populated manifest.</returns>
-        public static PackageManifest GenerateManifest(string directory = default(string), bool includeResources = false, bool hashFiles = false)
+        /// <param name="manifestFile">The filename of the file to which the manifest is to be saved.</param>
+        public static void GenerateManifest(string inputDirectory, bool includeResources, bool hashFiles, string manifestFile)
         {
+            ValidateInputDirectoryArgument(inputDirectory);
+
+            string[] files = Directory.GetFiles(inputDirectory, "*", SearchOption.AllDirectories);
+
             PackageManifestBuilder builder = new PackageManifestBuilder();
 
             Console.WriteLine("Generating new manifest...");
 
             builder.BuildDefault();
 
-            if (directory != default(string) && directory != string.Empty)
-            {
-                if (Directory.Exists(directory))
-                {
-                    Console.WriteLine($"Adding files from '{directory}'...");
+            Console.WriteLine($"Adding files from '{inputDirectory}'...");
 
-                    foreach (string file in Directory.GetFiles(directory, "*", SearchOption.AllDirectories))
-                    {
-                        AddFile(builder, file, directory, includeResources, hashFiles);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"Couldn't find input directory '{directory}'.");
-                }
+            foreach (string file in files)
+            {
+                AddFile(builder, file, inputDirectory, includeResources, hashFiles);
             }
 
-            Console.WriteLine("Manifest generated.");
+            PackageManifest manifest = builder.Manifest;
 
-            return builder.Manifest;
+            Console.WriteLine("√ Manifest generated.");
+
+            if (manifestFile != default(string))
+            {
+                try
+                {
+                    Console.WriteLine($"Saving output to file {manifestFile}...");
+                    File.WriteAllText(manifestFile, manifest.ToJson());
+                    Console.WriteLine("√ File saved successfully.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Unable to write to output file '{manifestFile}': {ex.Message}");
+                }
+            }
+            else
+            {
+                Console.Write("\n" + manifest.ToJson());
+            }
         }
 
         #endregion Public Methods
@@ -124,6 +136,33 @@ namespace OpenIIoT.Packager.Tools
             else
             {
                 Console.WriteLine($"Skipping file '{file}...");
+            }
+        }
+
+        /// <summary>
+        ///     Validates the inputDirectory argument for <see cref="GenerateManifest(string, bool, bool, string)"/>.
+        /// </summary>
+        /// <param name="inputDirectory">The value specified for the inputDirectory argument.</param>
+        /// <exception cref="ArgumentException">Thrown when the directory is a default or null string.</exception>
+        /// <exception cref="DirectoryNotFoundException">
+        ///     Thrown when the directory can not be found on the local file system.
+        /// </exception>
+        /// <exception cref="FileNotFoundException">Thrown when the directory contains no files.</exception>
+        private static void ValidateInputDirectoryArgument(string inputDirectory)
+        {
+            if (inputDirectory == default(string) || inputDirectory == string.Empty)
+            {
+                throw new ArgumentException($"The required argument 'directory' (-d) was not supplied.");
+            }
+
+            if (!Directory.Exists(inputDirectory))
+            {
+                throw new DirectoryNotFoundException($"The specified directory '{inputDirectory}' could not be found.");
+            }
+
+            if (Directory.GetFiles(inputDirectory, "*", SearchOption.AllDirectories).Length == 0)
+            {
+                throw new FileNotFoundException($"The specified directory '{inputDirectory}' is empty; Packages must contain at least one file.");
             }
         }
 

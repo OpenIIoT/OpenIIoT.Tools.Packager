@@ -97,6 +97,30 @@ namespace OpenIIoT.Packager
         [Argument('p', "package")]
         private static string PackageFile { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the passphrase for the private key.
+        /// </summary>
+        [Argument('a', "passphrase")]
+        private static string Passphrase { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the filename of the file containing the ASCII-armored PGP private key.
+        /// </summary>
+        [Argument('r', "private-key")]
+        private static string PrivateKeyFile { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the filename of the file containing the ASCII-armored PGP public key.
+        /// </summary>
+        [Argument('u', "public-key")]
+        private static string PublicKeyFile { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether the package file should be signed during a package operation.
+        /// </summary>
+        [Argument('s', "sign")]
+        private static bool SignPackage { get; set; }
+
         #endregion Private Properties
 
         #region Private Methods
@@ -132,22 +156,16 @@ namespace OpenIIoT.Packager
             {
                 if (command == "manifest")
                 {
-                    Manifest();
+                    ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles, ManifestFile);
                 }
                 else if (command == "package")
                 {
-                    PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile);
+                    PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Passphrase, PublicKeyFile);
                 }
-                else if (command == "sign")
+                else if (command == "trust")
                 {
                 }
                 else if (command == "verify")
-                {
-                }
-                else if (command == "create-trust")
-                {
-                }
-                else if (command == "verify-trust")
                 {
                 }
                 else if (command == "help")
@@ -159,44 +177,6 @@ namespace OpenIIoT.Packager
             {
                 Console.WriteLine($"Error: {ex.Message}");
             }
-        }
-
-        /// <summary>
-        ///     Generates a PackageManifest using the options passed to the application at run time.
-        /// </summary>
-        private static void Manifest()
-        {
-            if (InputDirectory != default(string) && !Directory.Exists(InputDirectory))
-            {
-                throw new DirectoryNotFoundException($"The specified directory '{InputDirectory}' could not be found.");
-            }
-
-            PackageManifest manifest = ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles);
-
-            if (ManifestFile != default(string))
-            {
-                try
-                {
-                    Console.WriteLine($"Saving output to file {ManifestFile}...");
-                    File.WriteAllText(ManifestFile, manifest.ToJson());
-                    Console.WriteLine("File saved successfully.");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Unable to write to output file '{ManifestFile}': {ex.Message}");
-                }
-            }
-            else
-            {
-                Console.Write("\n" + manifest.ToJson());
-            }
-        }
-
-        /// <summary>
-        ///     Signs a Package file
-        /// </summary>
-        private static void Sign()
-        {
         }
     }
 
