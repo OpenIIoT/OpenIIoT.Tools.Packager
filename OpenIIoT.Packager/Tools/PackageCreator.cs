@@ -60,62 +60,15 @@ namespace OpenIIoT.Packager.Tools
         /// <param name="inputDirectory">The directory containing the Package contents.</param>
         /// <param name="manifestFile">The PackageManifest file for the Package.</param>
         /// <param name="packageFile">The filename to which the Package file will be saved.</param>
-        public static void CreatePackage(string inputDirectory, string manifestFile, string packageFile)
+        public static void CreatePackage(string inputDirectory, string manifestFile, string packageFile, bool signPackage, string privateKeyFile, string password, string publicKeyFile)
         {
-            // validate input
-            if (inputDirectory == default(string))
-            {
-                throw new ArgumentException($"The required argument 'directory' (-d|--directory) was not supplied.");
-            }
+            ValidateInputDirectoryArgument(inputDirectory);
+            ValidatePackageFileArgument(packageFile);
+            ValidateSignatureArguments(signPackage, privateKeyFile, password, publicKeyFile);
 
-            if (!Directory.Exists(inputDirectory))
-            {
-                throw new DirectoryNotFoundException($"The specified directory '{inputDirectory}' could not be found.");
-            }
+            PackageManifest manifest = ValidateManifestFileArgumentAndRetrieveManifest(manifestFile);
 
-            if (Directory.GetFiles(inputDirectory, "*", SearchOption.AllDirectories).Length == 0)
-            {
-                throw new ArgumentException($"The specified directory '{inputDirectory}' is empty; Packages must contain at least one file.");
-            }
-
-            if (manifestFile == default(string))
-            {
-                throw new ArgumentException("The required argument 'manifest' (-m|--manifest) was not supplied.");
-            }
-
-            if (!File.Exists(manifestFile))
-            {
-                throw new FileNotFoundException($"The specified file '{manifestFile}' could not be found.");
-            }
-
-            // fetch and deserialize the PackageManifest from the specified file
-            PackageManifest manifest;
-
-            try
-            {
-                manifest = OpenPackageManifest(manifestFile);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"The specified manifest file '{manifestFile}' could not be opened: {ex.Message}");
-            }
-
-            if (packageFile == default(string))
-            {
-                throw new ArgumentException($"The required argument 'package' (-p|--package) was not supplied.");
-            }
-
-            try
-            {
-                File.WriteAllText(packageFile, "Hello World!");
-                File.Delete(packageFile);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"The specified package file '{packageFile}' could not be written: {ex.Message}");
-            }
-
-            // input validated. begin package creation.
+            // looks like: temp\OpenIIoT.Packager\<Guid>\
             string tempDirectory = Path.Combine(Path.GetTempPath(), System.Reflection.Assembly.GetEntryAssembly().GetName().Name, Guid.NewGuid().ToString());
             string payloadDirectory = Path.Combine(tempDirectory, SDK.Package.Constants.PayloadDirectoryName);
             string payloadArchiveName = Path.Combine(tempDirectory, SDK.Package.Constants.PayloadArchiveName);
@@ -172,16 +125,30 @@ namespace OpenIIoT.Packager.Tools
         #region Private Methods
 
         /// <summary>
-        ///     Reads the contents of the specified file and attempts to deserialize it to an instance of
-        ///     <see cref="PackageManifest"/> .
+        ///     Validates the inputDirectory argument for <see cref="CreatePackage(string, string, string, bool, string, string, string)"/>.
         /// </summary>
-        /// <param name="manifestFile">The file from which the manifest is read.</param>
-        /// <returns>The deserialized content of the manifest file.</returns>
-        private static PackageManifest OpenPackageManifest(string manifestFile)
+        /// <param name="inputDirectory">The value specified for the inputDirectory argument.</param>
+        /// <exception cref="ArgumentException">Thrown when the directory is a default or null string.</exception>
+        /// <exception cref="DirectoryNotFoundException">
+        ///     Thrown when the directory can not be found on the local file system.
+        /// </exception>
+        /// <exception cref="FileNotFoundException">Thrown when the directory contains no files.</exception>
+        private static void ValidateInputDirectoryArgument(string inputDirectory)
         {
-            string manifestContents = File.ReadAllText(manifestFile);
+            if (inputDirectory == default(string) || inputDirectory == string.Empty)
+            {
+                throw new ArgumentException($"The required argument 'directory' (-d) was not supplied.");
+            }
 
-            return JsonConvert.DeserializeObject<PackageManifest>(manifestContents);
+            if (!Directory.Exists(inputDirectory))
+            {
+                throw new DirectoryNotFoundException($"The specified directory '{inputDirectory}' could not be found.");
+            }
+
+            if (Directory.GetFiles(inputDirectory, "*", SearchOption.AllDirectories).Length == 0)
+            {
+                throw new FileNotFoundException($"The specified directory '{inputDirectory}' is empty; Packages must contain at least one file.");
+            }
         }
 
         /// <summary>
@@ -208,6 +175,134 @@ namespace OpenIIoT.Packager.Tools
                     {
                         file.Hash = Utility.GetFileSHA512Hash(fileToCheck);
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Validates the manifestFile argument for
+        ///     <see cref="CreatePackage(string, string, string, bool, string, string, string)"/> and, if valid, retrieves the
+        ///     <see cref="PackageManifest"/> from the file and returns it.
+        /// </summary>
+        /// <param name="manifestFile">The value specified for the manifestFile argument.</param>
+        /// <returns>The PackageManifest file retrieved from the file specified in the manifestFile argument.</returns>
+        /// <exception cref="ArgumentException">Thrown when the manifest file is a default or null string.</exception>
+        /// <exception cref="FileNotFoundException">
+        ///     Thrown when the manifest file can not be found on the local file system.
+        /// </exception>
+        /// <exception cref="InvalidDataException">Thrown when the manifest file is empty.</exception>
+        /// <exception cref="FileLoadException">Thrown when the manifest file fails to be loaded or deserialized.</exception>
+        private static PackageManifest ValidateManifestFileArgumentAndRetrieveManifest(string manifestFile)
+        {
+            if (manifestFile == default(string) || manifestFile == string.Empty)
+            {
+                throw new ArgumentException("The required argument 'manifest' (-m) was not supplied.");
+            }
+
+            if (!File.Exists(manifestFile))
+            {
+                throw new FileNotFoundException($"The specified manifest file '{manifestFile}' could not be found.");
+            }
+
+            string manifestContents = File.ReadAllText(manifestFile);
+
+            if (manifestContents.Length == 0)
+            {
+                throw new InvalidDataException($"The specified manifests file '{manifestFile}' is empty.");
+            }
+
+            // fetch and deserialize the PackageManifest from the specified file
+            PackageManifest manifest;
+
+            try
+            {
+                manifest = JsonConvert.DeserializeObject<PackageManifest>(manifestContents);
+            }
+            catch (Exception ex)
+            {
+                throw new FileLoadException($"The specified manifest file '{manifestFile}' could not be opened: {ex.Message}");
+            }
+
+            return manifest;
+        }
+
+        /// <summary>
+        ///     Validates the packageFile argument for <see cref="CreatePackage(string, string, string, bool, string, string, string)"/>.
+        /// </summary>
+        /// <param name="packageFile">The value specified for the packageFile argument.</param>
+        /// <exception cref="ArgumentException">Thrown when the package file is a default or null string.</exception>
+        /// <exception cref="Exception">Thrown when the package file can not be written.</exception>
+        private static void ValidatePackageFileArgument(string packageFile)
+        {
+            if (packageFile == default(string) || packageFile == string.Empty)
+            {
+                throw new ArgumentException($"The required argument 'package' (-p|--package) was not supplied.");
+            }
+
+            try
+            {
+                File.WriteAllText(packageFile, "Hello World!");
+                File.Delete(packageFile);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"The specified package file '{packageFile}' could not be written: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        ///     Validates the signPackage, privateKeyFile and publicKeyFile arguments for
+        ///     <see cref="CreatePackage(string, string, string, bool, string, string, string)"/> and returns a value indicating
+        ///     whether the package should be signed.
+        /// </summary>
+        /// <param name="signPackage">The value specified for the signPackage argument.</param>
+        /// <param name="privateKeyFile">The value specified for the privateKeyFile argument.</param>
+        /// <param name="password">the value specified for the privateKeyPassword argument.</param>
+        /// <param name="publicKeyFile">The value specified for the publicKeyFile argument.</param>
+        /// <exception cref="ArgumentException">
+        ///     Thrown when the privateKeyFile, privateKeyPassword, or publicKeyFile arguments are a default or null string.
+        /// </exception>
+        /// <exception cref="FileNotFoundException">
+        ///     Thrown when the private or public key files can not be found on the local file system.
+        /// </exception>
+        /// <exception cref="InvalidDataException">Thrown when the private or public key files are empty.</exception>
+        private static void ValidateSignatureArguments(bool signPackage, string privateKeyFile, string password, string publicKeyFile)
+        {
+            if (signPackage)
+            {
+                if (privateKeyFile == default(string) || privateKeyFile == string.Empty)
+                {
+                    throw new ArgumentException($"The required argument 'private-key' (-r) was not supplied.");
+                }
+
+                if (!File.Exists(privateKeyFile))
+                {
+                    throw new FileNotFoundException($"The specified private key file '{privateKeyFile}' could not be found.");
+                }
+
+                if (File.ReadAllText(privateKeyFile).Length == 0)
+                {
+                    throw new InvalidDataException($"The specified private key file '{privateKeyFile}' is empty.");
+                }
+
+                if (password == default(string) || password == string.Empty)
+                {
+                    throw new ArgumentException($"The required argument 'private-key-password' (-r) was not supplied.");
+                }
+
+                if (publicKeyFile == default(string) || publicKeyFile == string.Empty)
+                {
+                    throw new ArgumentException($"The required argument 'public-key' (-r) was not supplied.");
+                }
+
+                if (!File.Exists(publicKeyFile))
+                {
+                    throw new FileNotFoundException($"The specified public key file '{publicKeyFile}' could not be found.");
+                }
+
+                if (File.ReadAllText(publicKeyFile).Length == 0)
+                {
+                    throw new InvalidDataException($"The specified public key file '{publicKeyFile}' is empty.");
                 }
             }
         }

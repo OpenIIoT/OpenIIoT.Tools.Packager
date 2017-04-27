@@ -97,6 +97,18 @@ namespace OpenIIoT.Packager
         [Argument('p', "package")]
         private static string PackageFile { get; set; }
 
+        [Argument('a', "password")]
+        private static string Password { get; set; }
+
+        [Argument('r', "private-key")]
+        private static string PrivateKeyFile { get; set; }
+
+        [Argument('u', "public-key")]
+        private static string PublicKeyFile { get; set; }
+
+        [Argument('s', "sign")]
+        private static bool SignPackage { get; set; }
+
         #endregion Private Properties
 
         #region Private Methods
@@ -136,18 +148,12 @@ namespace OpenIIoT.Packager
                 }
                 else if (command == "package")
                 {
-                    PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile);
+                    PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Password, PublicKeyFile);
                 }
-                else if (command == "sign")
+                else if (command == "trust")
                 {
                 }
                 else if (command == "verify")
-                {
-                }
-                else if (command == "create-trust")
-                {
-                }
-                else if (command == "verify-trust")
                 {
                 }
                 else if (command == "help")

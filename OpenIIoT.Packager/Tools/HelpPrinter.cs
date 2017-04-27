@@ -86,20 +86,12 @@ namespace OpenIIoT.Packager.Tools
                     PrintPackageHelp();
                     return;
 
-                case "sign":
-                    PrintSignHelp();
-                    return;
-
                 case "verify":
                     PrintVerifyHelp();
                     return;
 
                 case "trust":
                     PrintTrustHelp();
-                    return;
-
-                case "verify-trust":
-                    PrintVerifyTrustHelp();
                     return;
 
                 default:
@@ -122,10 +114,8 @@ namespace OpenIIoT.Packager.Tools
 
             prefixed("> manifest\t\tGenerate a package manifest file.");
             prefixed("> package\t\tCreate a package file.");
-            prefixed("> sign\t\tDigitally sign a package file.");
-            prefixed("> verify\t\tVerify the integrity of a package file.");
             prefixed("> trust\t\tAdd a trust to a signed package file.");
-            prefixed("> verify-trust\tVerify a trusted package file.");
+            prefixed("> verify\t\tVerify the integrity of a package file.");
 
             lineBreak();
             prefixed("! use 'help <command>' to get more details about that command.");
@@ -181,32 +171,17 @@ namespace OpenIIoT.Packager.Tools
             prefixed("> package");
             lineBreak();
 
-            prefixed("<directory>\tDirectory containing payload files.");
-            prefixed("<manifest>\t\tThe manifest for the package (manifest.json, generate with 'manifest')");
-            prefixed("<output file>\tOutput package file (*.opkg).");
+            prefixed("<-d|--directory>\tDirectory containing payload files.");
+            prefixed("<-m|--manifest>\tThe manifest for the package (manifest.json, generate with 'manifest')");
+            prefixed("<-p|--package>\tThe output package file (*.opkg).");
+            prefixed("[-s|--sign]\tDetermines whether the package will be digitally signed.");
+            prefixed("[-r|--private-key]\tThe ASCII-armored PGP private key file.");
+            prefixed("[-a|--password]\tThe password for the private key file.");
+            prefixed("[-u|--public-key]\tThe ASCII-armored PGP public key file.");
 
             lineBreak();
-            prefixed("! ex: 'package \"desktop\\coolPlugin\" \"manifest.json\" \"coolPlugin.opkg\"'");
-            PrintFooter();
-        }
-
-        /// <summary>
-        ///     Prints the help message for the "sign" command.
-        /// </summary>
-        private static void PrintSignHelp()
-        {
-            PrintTitle("Sign");
-            PrintHeader();
-
-            prefixed("> sign");
-            lineBreak();
-
-            prefixed("<package>\t\tThe package to sign.");
-            prefixed("<public key file>\tThe ASCII-armored PGP public key file.");
-            prefixed("<private key file>\tThe ASCII-armored PGP private key file.");
-
-            lineBreak();
-            prefixed("! ex: 'sign \"coolPlugin.opkg\" \"publicKey.asc\" \"privateKey.asc\"");
+            prefixed("! ex: 'package -d \"desktop\\coolPlugin\" -m \"manifest.json\" -p \"coolPlugin.opkg\"'");
+            prefixed("! ex: 'package -d \"desktop\\coolPlugin\" -m \"manifest.json\" -p \"coolPlugin.opkg\" -s -r \"privateKey.asc\" -a MyPassword -u \"publicKey.asc\"'");
             PrintFooter();
         }
 
@@ -237,11 +212,12 @@ namespace OpenIIoT.Packager.Tools
             prefixed("> trust");
             lineBreak();
 
-            prefixed("<package>\t\tThe package to trust.");
-            prefixed("<private key file>\tThe ASCII-armored PGP private key file.");
+            prefixed("<-p|--package>\t\tThe package to trust.");
+            prefixed("<-r|--private-key>\tThe ASCII-armored PGP private key file.");
+            prefixed("<-a|--password>\tThe password for the private key file.");
 
             lineBreak();
-            prefixed("! ex: 'verify \"coolPlugin.opkg\" \"privateKey.asc\"'");
+            prefixed("! ex: 'verify -p \"coolPlugin.opkg\" -r \"privateKey.asc\" -a MyPassword'");
             PrintFooter();
         }
 
@@ -260,24 +236,6 @@ namespace OpenIIoT.Packager.Tools
 
             lineBreak();
             prefixed("! ex: 'verify \"coolPlugin.opkg\"'");
-            PrintFooter();
-        }
-
-        /// <summary>
-        ///     Prints the help message for the "verify-trust" command.
-        /// </summary>
-        private static void PrintVerifyTrustHelp()
-        {
-            PrintTitle("Verify-Trust");
-            PrintHeader();
-
-            prefixed("> verify-trust");
-            lineBreak();
-
-            prefixed("<package>\t\tThe package to verify.");
-
-            lineBreak();
-            prefixed("! ex: 'verify-trust \"coolPlugin.opkg\"'");
             PrintFooter();
         }
 
