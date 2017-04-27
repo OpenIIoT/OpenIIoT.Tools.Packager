@@ -171,13 +171,13 @@ namespace OpenIIoT.Packager.Tools
             prefixed("> package");
             lineBreak();
 
-            prefixed("<-d|--directory>\tDirectory containing payload files.");
-            prefixed("<-m|--manifest>\tThe manifest for the package (manifest.json, generate with 'manifest')");
-            prefixed("<-p|--package>\tThe output package file (*.opkg).");
-            prefixed("[-s|--sign]\tDetermines whether the package will be digitally signed.");
-            prefixed("[-r|--private-key]\tThe ASCII-armored PGP private key file.");
-            prefixed("[-a|--password]\tThe password for the private key file.");
-            prefixed("[-u|--public-key]\tThe ASCII-armored PGP public key file.");
+            prefixed("<-d|--directory <directory>>\tDirectory containing payload files.");
+            prefixed("<-m|--manifest <file>>\t\tThe manifest for the package (manifest.json, generate with 'manifest')");
+            prefixed("<-p|--package <file>>\t\tThe output package file (*.opkg).");
+            prefixed("[-s|--sign]\t\t\tDetermines whether the package will be digitally signed.");
+            prefixed("[-r|--private-key <file>]\t\tThe ASCII-armored PGP private key file.");
+            prefixed("[-a|--passphrase <string>]\t\tThe password for the private key file.");
+            prefixed("[-u|--public-key <file>]\t\tThe ASCII-armored PGP public key file.");
 
             lineBreak();
             prefixed("! ex: 'package -d \"desktop\\coolPlugin\" -m \"manifest.json\" -p \"coolPlugin.opkg\"'");

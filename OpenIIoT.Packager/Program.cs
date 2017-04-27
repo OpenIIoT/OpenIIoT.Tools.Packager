@@ -97,15 +97,27 @@ namespace OpenIIoT.Packager
         [Argument('p', "package")]
         private static string PackageFile { get; set; }
 
-        [Argument('a', "password")]
-        private static string Password { get; set; }
+        /// <summary>
+        ///     Gets or sets the passphrase for the private key.
+        /// </summary>
+        [Argument('a', "passphrase")]
+        private static string Passphrase { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the filename of the file containing the ASCII-armored PGP private key.
+        /// </summary>
         [Argument('r', "private-key")]
         private static string PrivateKeyFile { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the filename of the file containing the ASCII-armored PGP public key.
+        /// </summary>
         [Argument('u', "public-key")]
         private static string PublicKeyFile { get; set; }
 
+        /// <summary>
+        ///     Gets or sets a value indicating whether the package file should be signed during a package operation.
+        /// </summary>
         [Argument('s', "sign")]
         private static bool SignPackage { get; set; }
 
@@ -148,7 +160,7 @@ namespace OpenIIoT.Packager
                 }
                 else if (command == "package")
                 {
-                    PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Password, PublicKeyFile);
+                    PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Passphrase, PublicKeyFile);
                 }
                 else if (command == "trust")
                 {
@@ -196,13 +208,6 @@ namespace OpenIIoT.Packager
             {
                 Console.Write("\n" + manifest.ToJson());
             }
-        }
-
-        /// <summary>
-        ///     Signs a Package file
-        /// </summary>
-        private static void Sign()
-        {
         }
     }
 

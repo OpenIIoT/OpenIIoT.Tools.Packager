@@ -58,29 +58,14 @@ namespace OpenIIoT.Packager
         /// <summary>
         ///     Computes and returns the SHA512 hash of the specified file.
         /// </summary>
-        /// <param name="file">the file for which the SHA512 hash is to be computed.</param>
+        /// <param name="file">The file for which the SHA512 hash is to be computed.</param>
         /// <returns>The SHA512 hash of the specified file.</returns>
         /// <exception cref="FileNotFoundException">Thrown the specified file can not be found.</exception>
         public static string GetFileSHA512Hash(string file)
         {
             if (File.Exists(file))
             {
-                byte[] fileBytes = File.ReadAllBytes(file);
-                byte[] hash;
-
-                using (SHA512 sha512 = new SHA512Managed())
-                {
-                    hash = sha512.ComputeHash(fileBytes);
-                }
-
-                StringBuilder stringBuilder = new StringBuilder(128);
-
-                foreach (byte b in hash)
-                {
-                    stringBuilder.Append(b.ToString("X2"));
-                }
-
-                return stringBuilder.ToString();
+                return GetStringSHA512Hash(File.ReadAllText(file));
             }
             else
             {
@@ -123,6 +108,31 @@ namespace OpenIIoT.Packager
             }
 
             return file.Replace(baseDirectory, string.Empty);
+        }
+
+        /// <summary>
+        ///     Computes and returns the SHA512 hash of the specified string.
+        /// </summary>
+        /// <param name="content">The string for which the SHA512 hash is to be computed.</param>
+        /// <returns>The SHA512 hash of the specified string.</returns>
+        public static string GetStringSHA512Hash(string content)
+        {
+            byte[] contentBytes = Encoding.ASCII.GetBytes(content);
+            byte[] hash;
+
+            using (SHA512 sha512 = new SHA512Managed())
+            {
+                hash = sha512.ComputeHash(contentBytes);
+            }
+
+            StringBuilder stringBuilder = new StringBuilder(128);
+
+            foreach (byte b in hash)
+            {
+                stringBuilder.Append(b.ToString("X2"));
+            }
+
+            return stringBuilder.ToString();
         }
 
         /// <summary>

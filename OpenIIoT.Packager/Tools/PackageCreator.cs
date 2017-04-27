@@ -42,8 +42,10 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Text;
 using Newtonsoft.Json;
 using OpenIIoT.SDK.Package.Manifest;
+using Utility.PGPSignatureTools;
 
 namespace OpenIIoT.Packager.Tools
 {
@@ -60,11 +62,15 @@ namespace OpenIIoT.Packager.Tools
         /// <param name="inputDirectory">The directory containing the Package contents.</param>
         /// <param name="manifestFile">The PackageManifest file for the Package.</param>
         /// <param name="packageFile">The filename to which the Package file will be saved.</param>
-        public static void CreatePackage(string inputDirectory, string manifestFile, string packageFile, bool signPackage, string privateKeyFile, string password, string publicKeyFile)
+        /// <param name="signPackage">Indicates whether the package should be signed.</param>
+        /// <param name="privateKeyFile">The file containing the ASCII-armored PGP private key.</param>
+        /// <param name="passphrase">The passphrase for the private key.</param>
+        /// <param name="publicKeyFile">The file containing the ASCII-armored PGP public key.</param>
+        public static void CreatePackage(string inputDirectory, string manifestFile, string packageFile, bool signPackage, string privateKeyFile, string passphrase, string publicKeyFile)
         {
             ValidateInputDirectoryArgument(inputDirectory);
             ValidatePackageFileArgument(packageFile);
-            ValidateSignatureArguments(signPackage, privateKeyFile, password, publicKeyFile);
+            ValidateSignatureArguments(signPackage, privateKeyFile, passphrase, publicKeyFile);
 
             PackageManifest manifest = ValidateManifestFileArgumentAndRetrieveManifest(manifestFile);
 
@@ -77,36 +83,51 @@ namespace OpenIIoT.Packager.Tools
             try
             {
                 Console.WriteLine($"Creating temporary directory '{tempDirectory}'...");
+
                 Directory.CreateDirectory(tempDirectory);
-                Console.WriteLine($"√ Directory created.");
 
+                Console.WriteLine("√ Directory created.");
                 Console.WriteLine($"Copying input directory '{inputDirectory}' to '{payloadDirectory}'...");
+
                 Microsoft.VisualBasic.FileIO.FileSystem.CopyDirectory(inputDirectory, payloadDirectory);
-                Console.WriteLine($"√ Directory copied successfully.");
 
+                Console.WriteLine("√ Directory copied successfully.");
                 Console.WriteLine($"Validating manifest '{manifestFile}' and generating SHA512 hashes...");
+
                 ValidateManifestAndGenerateHashes(manifest, payloadDirectory);
-                Console.WriteLine($"√ Manifest validated and hashes written.");
 
+                Console.WriteLine("√ Manifest validated and hashes written.");
                 Console.WriteLine($"Compressing payload into '{payloadArchiveName}'...");
+
                 ZipFile.CreateFromDirectory(payloadDirectory, payloadArchiveName);
-                Console.WriteLine($"√ Successfully compressed payload.");
 
+                Console.WriteLine("√ Successfully compressed payload.");
                 Console.WriteLine($"Deleting temporary payload directory '{payloadDirectory}...");
-                Directory.Delete(payloadDirectory, true);
-                Console.WriteLine($"√ Successfully deleted temporary payload directory.");
 
-                Console.WriteLine($"Updating manifest with SHA512 hash of payload archive...");
+                Directory.Delete(payloadDirectory, true);
+
+                Console.WriteLine("√ Successfully deleted temporary payload directory.");
+                Console.WriteLine("Updating manifest with SHA512 hash of payload archive...");
+
                 manifest.Hash = Utility.GetFileSHA512Hash(payloadArchiveName);
+
                 Console.WriteLine($"√ Hash computed successfully: {manifest.Hash}.");
 
-                Console.WriteLine($"Writing manifest to 'manifest.json' in '{tempDirectory}'...");
-                WriteManifest(manifest, tempDirectory);
-                Console.WriteLine($"√ Manifest written successfully.");
+                if (signPackage)
+                {
+                    manifest = SignManifest(manifest, privateKeyFile, passphrase, publicKeyFile);
+                }
 
+                Console.WriteLine($"Writing manifest to 'manifest.json' in '{tempDirectory}'...");
+
+                WriteManifest(manifest, tempDirectory);
+
+                Console.WriteLine("√ Manifest written successfully.");
                 Console.WriteLine($"Packaging manifest and payload into '{packageFile}'...");
+
                 ZipFile.CreateFromDirectory(tempDirectory, packageFile);
-                Console.WriteLine($"√ Package created successfully!");
+
+                Console.WriteLine("√ Package created successfully!");
             }
             catch (Exception ex)
             {
@@ -114,15 +135,64 @@ namespace OpenIIoT.Packager.Tools
             }
             finally
             {
-                Console.WriteLine($"Deleting temporary files...");
+                Console.WriteLine("Deleting temporary files...");
+
                 Directory.Delete(tempDirectory, true);
-                Console.WriteLine($"√ Temporary files deleted successfully.");
+
+                Console.WriteLine("√ Temporary files deleted successfully.");
             }
         }
 
         #endregion Public Methods
 
         #region Private Methods
+
+        /// <summary>
+        ///     Digitally signs the specified manifest, adds the signature to the manifest, and returns it.
+        /// </summary>
+        /// <param name="manifest">The manifest to sign.</param>
+        /// <param name="privateKeyFile">The file containing the PGP private key with which to sign the file.</param>
+        /// <param name="passphrase">The passphrase for the PGP private key.</param>
+        /// <param name="publicKeyFile">The file containing the PGP public key to insert into the signature.</param>
+        /// <returns>The signed manifest.</returns>
+        private static PackageManifest SignManifest(PackageManifest manifest, string privateKeyFile, string passphrase, string publicKeyFile)
+        {
+            Console.WriteLine("Digitally signing manifest...");
+            Console.WriteLine("Creating SHA512 hash of serialized manifest...");
+
+            string manifestHash = Utility.GetStringSHA512Hash(manifest.ToJson());
+
+            Console.WriteLine($"√ Hash computed successfully: {manifestHash}.");
+
+            Console.WriteLine("Reading keys from disk...");
+
+            string privateKey = File.ReadAllText(privateKeyFile);
+            string publicKey = File.ReadAllText(publicKeyFile);
+
+            Console.WriteLine("√ Keys read successfully.");
+
+            byte[] manifestBytes = Encoding.ASCII.GetBytes(manifest.ToJson());
+
+            Console.WriteLine("Creating digest...");
+
+            byte[] digestBytes = PGPSignature.Sign(manifestBytes, privateKey, passphrase);
+
+            Console.WriteLine("√ Digest created successfully.");
+
+            string digest = Encoding.ASCII.GetString(digestBytes);
+
+            Console.WriteLine("Adding signature to manifest...");
+
+            PackageManifestSignature signature = new PackageManifestSignature();
+            signature.Digest = digest;
+            signature.Key = publicKey;
+
+            manifest.Signature = signature;
+
+            Console.WriteLine("√ Manifest signed successfully.");
+
+            return manifest;
+        }
 
         /// <summary>
         ///     Validates the inputDirectory argument for <see cref="CreatePackage(string, string, string, bool, string, string, string)"/>.
