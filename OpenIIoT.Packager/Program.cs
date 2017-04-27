@@ -156,7 +156,7 @@ namespace OpenIIoT.Packager
             {
                 if (command == "manifest")
                 {
-                    Manifest();
+                    ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles, ManifestFile);
                 }
                 else if (command == "package")
                 {
@@ -176,37 +176,6 @@ namespace OpenIIoT.Packager
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        ///     Generates a PackageManifest using the options passed to the application at run time.
-        /// </summary>
-        private static void Manifest()
-        {
-            if (InputDirectory != default(string) && !Directory.Exists(InputDirectory))
-            {
-                throw new DirectoryNotFoundException($"The specified directory '{InputDirectory}' could not be found.");
-            }
-
-            PackageManifest manifest = ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles);
-
-            if (ManifestFile != default(string))
-            {
-                try
-                {
-                    Console.WriteLine($"Saving output to file {ManifestFile}...");
-                    File.WriteAllText(ManifestFile, manifest.ToJson());
-                    Console.WriteLine("File saved successfully.");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Unable to write to output file '{ManifestFile}': {ex.Message}");
-                }
-            }
-            else
-            {
-                Console.Write("\n" + manifest.ToJson());
             }
         }
     }
