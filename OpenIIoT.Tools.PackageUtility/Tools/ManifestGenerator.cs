@@ -43,7 +43,7 @@ using System;
 using System.IO;
 using OpenIIoT.SDK.Package.Manifest;
 
-namespace OpenIIoT.Packager.Tools
+namespace OpenIIoT.Tools.PackageUtility.Tools
 {
     /// <summary>
     ///     Generates and populates <see cref="PackageManifest"/> objects.

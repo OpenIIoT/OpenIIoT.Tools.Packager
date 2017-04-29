@@ -48,7 +48,7 @@ using Newtonsoft.Json;
 using OpenIIoT.SDK.Package.Manifest;
 using Newtonsoft.Json.Linq;
 
-namespace OpenIIoT.Packager
+namespace OpenIIoT.Tools.PackageUtility
 {
     /// <summary>
     ///     Contains miscellaneous static methods.
