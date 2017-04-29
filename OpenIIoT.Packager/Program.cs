@@ -42,6 +42,7 @@
 using System;
 using System.Collections.Generic;
 using OpenIIoT.Packager.Tools;
+using OpenIIoT.SDK.Package;
 using Utility.CommandLine;
 
 namespace OpenIIoT.Packager
@@ -158,7 +159,7 @@ namespace OpenIIoT.Packager
                 }
                 else if (command == "package")
                 {
-                    PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Passphrase, KeybaseUsername);
+                    SDK.Package.Packager.PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Passphrase, KeybaseUsername);
                 }
                 else if (command == "trust")
                 {
