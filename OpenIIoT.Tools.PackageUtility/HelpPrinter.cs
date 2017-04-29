@@ -42,7 +42,7 @@
 using System;
 using Utility.BigFont;
 
-namespace OpenIIoT.Packager.Tools
+namespace OpenIIoT.Tools.PackageUtility
 {
     /// <summary>
     ///     Prints help messages for the Application to the console.

@@ -41,10 +41,10 @@
 
 using System;
 using System.Collections.Generic;
-using OpenIIoT.Packager.Tools;
+using OpenIIoT.SDK.Package.Packager;
 using Utility.CommandLine;
 
-namespace OpenIIoT.Packager
+namespace OpenIIoT.Tools.PackageUtility
 {
     /// <summary>
     ///     The main Application class.
@@ -129,8 +129,7 @@ namespace OpenIIoT.Packager
         /// <remarks>
         ///     The command line arguments are expected to start with an operand consisting of an application command, followed by
         ///     zero or more arguments and/or operands associated with the specified command. A complete list of commands and
-        ///     arguments can be viewed in the <see cref="Tools.HelpPrinter"/> class, or via the command line by specifying the
-        ///     "help" command.
+        ///     arguments can be viewed in the <see cref="HelpPrinter"/> class, or via the command line by specifying the "help" command.
         /// </remarks>
         /// <param name="args">Command line arguments.</param>
         public static void Main(string[] args)
@@ -154,11 +153,13 @@ namespace OpenIIoT.Packager
 
                 if (command == "manifest")
                 {
-                    ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles, ManifestFile);
+                    Tools.ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles, ManifestFile);
                 }
                 else if (command == "package")
                 {
+                    PackageCreator.Updated += Update;
                     PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Passphrase, KeybaseUsername);
+                    PackageCreator.Updated -= Update;
                 }
                 else if (command == "trust")
                 {
@@ -176,6 +177,17 @@ namespace OpenIIoT.Packager
                 Console.WriteLine($"Error: {ex.Message}");
                 Environment.Exit(1);
             }
+        }
+
+        /// <summary>
+        ///     Event handler for events raised from the <see cref="SDK.Package.Packager"/> namespace; writes the message and
+        ///     operation to the console window.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="args">The event arguments.</param>
+        private static void Update(object sender, PackagerUpdateEventArgs args)
+        {
+            Console.WriteLine($"[{args.Operation.ToString()}]: {args.Message}");
         }
     }
 

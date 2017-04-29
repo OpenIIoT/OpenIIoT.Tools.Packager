@@ -1,24 +1,24 @@
 ﻿/*
       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀  ▀  ▀      ▀▀
       █
-      █   ▄████████
-      █   ███    ███
-      █   ███    █▀   ██████  ██▄▄▄▄    ▄█████     ██      ▄█████  ██▄▄▄▄      ██      ▄█████
-      █   ███        ██    ██ ██▀▀▀█▄   ██  ▀  ▀███████▄   ██   ██ ██▀▀▀█▄ ▀███████▄   ██  ▀
-      █   ███        ██    ██ ██   ██   ██         ██  ▀   ██   ██ ██   ██     ██  ▀   ██
-      █   ███    █▄  ██    ██ ██   ██ ▀███████     ██    ▀████████ ██   ██     ██    ▀███████
-      █   ███    ███ ██    ██ ██   ██    ▄  ██     ██      ██   ██ ██   ██     ██       ▄  ██
-      █   ████████▀   ██████   █   █   ▄████▀     ▄██▀     ██   █▀  █   █     ▄██▀    ▄████▀
+      █      ▄███████▄                                                               ▄█    █▄
+      █     ███    ███                                                              ███    ███
+      █     ███    ███   ▄█████   ▄██████    █  █▄     ▄█████     ▄████▄     ▄█████ ███    ███   ▄█████   █        █  ██████▄    ▄█████      ██     ██████     █████
+      █     ███    ███   ██   ██ ██    ██   ██ ▄██▀    ██   ██   ██    ▀    ██   █  ███    ███   ██   ██ ██       ██  ██   ▀██   ██   ██ ▀███████▄ ██    ██   ██  ██
+      █   ▀█████████▀    ██   ██ ██    ▀    ██▐█▀      ██   ██  ▄██        ▄██▄▄    ███    ███   ██   ██ ██       ██▌ ██    ██   ██   ██     ██  ▀ ██    ██  ▄██▄▄█▀
+      █     ███        ▀████████ ██    ▄  ▀▀████     ▀████████ ▀▀██ ███▄  ▀▀██▀▀    ███    ███ ▀████████ ██       ██  ██    ██ ▀████████     ██    ██    ██ ▀███████
+      █     ███          ██   ██ ██    ██   ██ ▀██▄    ██   ██   ██    ██   ██   █   ██▄  ▄██    ██   ██ ██▌    ▄ ██  ██   ▄██   ██   ██     ██    ██    ██   ██  ██
+      █    ▄████▀        ██   █▀ ██████▀    ▀█   ▀█▀   ██   █▀   ██████▀    ███████   ▀████▀     ██   █▀ ████▄▄██ █   ██████▀    ██   █▀    ▄██▀    ██████    ██  ██
       █
  ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ▄▄  ▄▄ ▄▄   ▄▄▄▄ ▄▄     ▄▄     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ▄ ▄
  █████████████████████████████████████████████████████████████ ███████████████ ██  ██ ██   ████ ██     ██     ████████████████ █ █
       ▄
-      █  Constants for the Packager application.
+      █  Validates Package files.
       █
       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀▀▀▀▀▀▀▀▀ ▀ ▀▀▀     ▀▀               ▀
       █  The GNU Affero General Public License (GNU AGPL)
       █
-      █  Copyright (C) 2016-2017 JP Dillingham (jp@dillingham.ws)
+      █  Copyright (C) 2016 JP Dillingham (jp@dillingham.ws)
       █
       █  This program is free software: you can redistribute it and/or modify
       █  it under the terms of the GNU Affero General Public License as published by
@@ -39,39 +39,24 @@
                                                                                                  ▀████▀
                                                                                                    ▀▀                            */
 
-namespace OpenIIoT.Packager
+namespace OpenIIoT.Tools.PackageUtility.Tools
 {
     /// <summary>
-    ///     Constants for the Packager application.
+    ///     Verifies Package files.
     /// </summary>
-    public static class Constants
+    public static class PackageVerifier
     {
-        #region Public Fields
+        #region Public Methods
 
         /// <summary>
-        ///     The issuer or originator of the PGP keys used to generate the Package digest.
+        ///     Creates a Package file with the specified filename from the specified input directory using the specified manifest.
         /// </summary>
-        public const string KeyIssuer = "Keybase.io";
+        /// <param name="packageFile">The filename of the Package file to validate.</param>
+        /// <param name="trustFile">The file containing the ASCII-armored PGP public key for the trust.</param>
+        public static void VerifyPackage(string packageFile, string trustFile)
+        {
+        }
 
-        /// <summary>
-        ///     The minimum length for any valid PGP public key retrieved from the keybase.io API.
-        /// </summary>
-        /// <remarks>
-        ///     This value is based on a few arbitrary examples rather than hard logic. Header information varies from key to key,
-        ///     and the encryption scheme used to create the key may also vary.
-        /// </remarks>
-        public const int KeyMinimumLength = 4000;
-
-        /// <summary>
-        ///     The base url for retrieval of PGP public key information.
-        /// </summary>
-        public const string KeyUrlBase = "https://keybase.io/_/api/1.0/user/lookup.json?username=$";
-
-        /// <summary>
-        ///     The username placeholder token for <see cref="KeyUrlBase"/>.
-        /// </summary>
-        public const string KeyUrlPlaceholder = "$";
-
-        #endregion Public Fields
+        #endregion Public Methods
     }
 }
