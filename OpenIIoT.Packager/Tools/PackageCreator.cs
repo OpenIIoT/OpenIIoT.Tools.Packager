@@ -161,7 +161,9 @@ namespace OpenIIoT.Packager.Tools
 
             // insert a signature into the manifest. the signer must be included in the hash to prevent tampering.
             PackageManifestSignature signature = new PackageManifestSignature();
-            signature.Signer = keybaseUsername;
+            signature.Issuer = Constants.KeyIssuer;
+            signature.Subject = keybaseUsername;
+            signature.PublicKeyUrl = Utility.GetKeyInfoUrlForUser(keybaseUsername);
             manifest.Signature = signature;
 
             Console.WriteLine("Creating SHA512 hash of serialized manifest...");

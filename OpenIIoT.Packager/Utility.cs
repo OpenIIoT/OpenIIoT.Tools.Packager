@@ -58,21 +58,13 @@ namespace OpenIIoT.Packager
         #region Public Methods
 
         /// <summary>
-        ///     Computes and returns the SHA512 hash of the specified file.
+        ///     Fetches an object containing key information for the specified username.
         /// </summary>
-        /// <param name="file">The file for which the SHA512 hash is to be computed.</param>
-        /// <returns>The SHA512 hash of the specified file.</returns>
-        /// <exception cref="FileNotFoundException">Thrown when the specified file can not be found.</exception>
-        public static string GetFileSHA512Hash(string file)
+        /// <param name="username">The username for which the associated key information is to be fetched.</param>
+        /// <returns>The fetched object.</returns>
+        public static JObject FetchKeyInfo(string username)
         {
-            if (File.Exists(file))
-            {
-                return GetStringSHA512Hash(File.ReadAllText(file));
-            }
-            else
-            {
-                throw new FileNotFoundException($"The file {file} could not be found.");
-            }
+            return FetchObjectFromURL(GetKeyInfoUrlForUser(username));
         }
 
         /// <summary>
@@ -107,22 +99,30 @@ namespace OpenIIoT.Packager
             JObject key = FetchKeyInfo(username);
             string publicKey = key["them"]["public_keys"]["primary"]["bundle"].ToString();
 
-            if (publicKey.Length < Constants.MinimumKeyLength)
+            if (publicKey.Length < Constants.KeyMinimumLength)
             {
-                throw new InvalidDataException($"The length of the retrieved key was not long enough (expected: >= {Constants.MinimumKeyLength}, actual: {publicKey.Length}) to be a valid PGP public key.");
+                throw new InvalidDataException($"The length of the retrieved key was not long enough (expected: >= {Constants.KeyMinimumLength}, actual: {publicKey.Length}) to be a valid PGP public key.");
             }
 
             return publicKey;
         }
 
         /// <summary>
-        ///     Fetches an object containing key information for the specified username.
+        ///     Computes and returns the SHA512 hash of the specified file.
         /// </summary>
-        /// <param name="username">The username for which the associated key information is to be fetched.</param>
-        /// <returns>The fetched object.</returns>
-        public static JObject FetchKeyInfo(string username)
+        /// <param name="file">The file for which the SHA512 hash is to be computed.</param>
+        /// <returns>The SHA512 hash of the specified file.</returns>
+        /// <exception cref="FileNotFoundException">Thrown when the specified file can not be found.</exception>
+        public static string GetFileSHA512Hash(string file)
         {
-            return FetchObjectFromURL(Constants.KeyUrlBase.Replace("$", username));
+            if (File.Exists(file))
+            {
+                return GetStringSHA512Hash(File.ReadAllText(file));
+            }
+            else
+            {
+                throw new FileNotFoundException($"The file {file} could not be found.");
+            }
         }
 
         /// <summary>
@@ -144,6 +144,16 @@ namespace OpenIIoT.Packager
             {
                 return PackageManifestFileType.Resource;
             }
+        }
+
+        /// <summary>
+        ///     Returns the url used to retrieve key information for the specified user.
+        /// </summary>
+        /// <param name="username">The user for which key information is to be returned.</param>
+        /// <returns>The key information url.</returns>
+        public static string GetKeyInfoUrlForUser(string username)
+        {
+            return Constants.KeyUrlBase.Replace(Constants.KeyUrlPlaceholder, username);
         }
 
         /// <summary>
