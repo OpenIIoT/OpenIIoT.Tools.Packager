@@ -41,10 +41,12 @@
 
 using System;
 using System.IO;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
 using OpenIIoT.SDK.Package.Manifest;
+using Newtonsoft.Json.Linq;
 
 namespace OpenIIoT.Packager
 {
@@ -60,7 +62,7 @@ namespace OpenIIoT.Packager
         /// </summary>
         /// <param name="file">The file for which the SHA512 hash is to be computed.</param>
         /// <returns>The SHA512 hash of the specified file.</returns>
-        /// <exception cref="FileNotFoundException">Thrown the specified file can not be found.</exception>
+        /// <exception cref="FileNotFoundException">Thrown when the specified file can not be found.</exception>
         public static string GetFileSHA512Hash(string file)
         {
             if (File.Exists(file))
@@ -71,6 +73,56 @@ namespace OpenIIoT.Packager
             {
                 throw new FileNotFoundException($"The file {file} could not be found.");
             }
+        }
+
+        /// <summary>
+        ///     Fetches and deserializes an object from the specified URL.
+        /// </summary>
+        /// <param name="url">The fully qualified URL from which the object is to be fetched.</param>
+        /// <returns>The deserialized fetched object.</returns>
+        /// <exception cref="WebException">Thrown when an error occurs fetching the object.</exception>
+        public static JObject FetchObjectFromURL(string url)
+        {
+            try
+            {
+                using (WebClient client = new WebClient())
+                {
+                    string content = client.DownloadString(url);
+                    return JObject.Parse(content);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new WebException($"Failed to fetch the object from '{url}': {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        ///     Fetches the primary PGP public key for the specified keybase.io user.
+        /// </summary>
+        /// <param name="username">The username of the keybase.io user for which to fetch the key.</param>
+        /// <returns>The retrieved PGP public key.</returns>
+        public static string FetchPublicKeyForUser(string username)
+        {
+            JObject key = FetchKeyInfo(username);
+            string publicKey = key["them"]["public_keys"]["primary"]["bundle"].ToString();
+
+            if (publicKey.Length < Constants.MinimumKeyLength)
+            {
+                throw new InvalidDataException($"The length of the retrieved key was not long enough (expected: >= {Constants.MinimumKeyLength}, actual: {publicKey.Length}) to be a valid PGP public key.");
+            }
+
+            return publicKey;
+        }
+
+        /// <summary>
+        ///     Fetches an object containing key information for the specified username.
+        /// </summary>
+        /// <param name="username">The username for which the associated key information is to be fetched.</param>
+        /// <returns>The fetched object.</returns>
+        public static JObject FetchKeyInfo(string username)
+        {
+            return FetchObjectFromURL(Constants.KeyUrlBase.Replace("$", username));
         }
 
         /// <summary>

@@ -81,7 +81,7 @@ namespace OpenIIoT.Packager.Tools
 
             PackageManifest manifest = builder.Manifest;
 
-            Console.WriteLine("√ Manifest generated.");
+            Console.WriteLine(" √ Manifest generated.");
 
             if (manifestFile != default(string))
             {
@@ -89,7 +89,7 @@ namespace OpenIIoT.Packager.Tools
                 {
                     Console.WriteLine($"Saving output to file {manifestFile}...");
                     File.WriteAllText(manifestFile, manifest.ToJson());
-                    Console.WriteLine("√ File saved successfully.");
+                    Console.WriteLine(" √ File saved successfully.");
                 }
                 catch (Exception ex)
                 {
@@ -128,7 +128,7 @@ namespace OpenIIoT.Packager.Tools
 
                 if (type == PackageManifestFileType.Binary || hashFiles)
                 {
-                    newFile.Hash = "[deferred]";
+                    newFile.Checksum = string.Empty;
                 }
 
                 builder.AddFile(type, newFile);

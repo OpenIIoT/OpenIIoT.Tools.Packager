@@ -45,6 +45,7 @@ using System.IO;
 using OpenIIoT.Packager.Tools;
 using OpenIIoT.SDK.Package.Manifest;
 using Utility.CommandLine;
+using Newtonsoft.Json.Linq;
 
 namespace OpenIIoT.Packager
 {
@@ -110,10 +111,10 @@ namespace OpenIIoT.Packager
         private static string PrivateKeyFile { get; set; }
 
         /// <summary>
-        ///     Gets or sets the filename of the file containing the ASCII-armored PGP public key.
+        ///     Gets or sets the Keybase.io username of the account hosting the PGP public key used for digest verification.
         /// </summary>
-        [Argument('u', "public-key")]
-        private static string PublicKeyFile { get; set; }
+        [Argument('u', "keybase-username")]
+        private static string KeybaseUsername { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether the package file should be signed during a package operation.
@@ -160,13 +161,15 @@ namespace OpenIIoT.Packager
                 }
                 else if (command == "package")
                 {
-                    PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Passphrase, PublicKeyFile);
+                    PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Passphrase, KeybaseUsername);
                 }
                 else if (command == "trust")
                 {
                 }
                 else if (command == "verify")
                 {
+                    Console.WriteLine(Utility.FetchPublicKeyForUser("max"));
+                    Console.WriteLine(Utility.FetchPublicKeyForUser("max"));
                 }
                 else if (command == "help")
                 {
