@@ -24,7 +24,7 @@
         /// <summary>
         ///     The base url for retrieval of PGP public key information.
         /// </summary>
-        public const string KeyUrlBase = "https://keybase.io/_/api/1.0/user/lookup.json?username=$&fields=basics,profile,emails,public_keys";
+        public const string KeyUrlBase = "https://keybase.io/_/api/1.0/user/lookup.json?username=$";
 
         /// <summary>
         ///     The username placeholder token for <see cref="KeyUrlBase"/>.
