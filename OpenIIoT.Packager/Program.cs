@@ -41,9 +41,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using OpenIIoT.Packager.Tools;
-using OpenIIoT.SDK.Package.Manifest;
 using Utility.CommandLine;
 
 namespace OpenIIoT.Packager
@@ -80,6 +78,12 @@ namespace OpenIIoT.Packager
         private static string InputDirectory { get; set; }
 
         /// <summary>
+        ///     Gets or sets the Keybase.io username of the account hosting the PGP public key used for digest verification.
+        /// </summary>
+        [Argument('u', "keybase-username")]
+        private static string KeybaseUsername { get; set; }
+
+        /// <summary>
         ///     Gets or sets the input manifest for package generation.
         /// </summary>
         [Argument('m', "manifest")]
@@ -110,12 +114,6 @@ namespace OpenIIoT.Packager
         private static string PrivateKeyFile { get; set; }
 
         /// <summary>
-        ///     Gets or sets the filename of the file containing the ASCII-armored PGP public key.
-        /// </summary>
-        [Argument('u', "public-key")]
-        private static string PublicKeyFile { get; set; }
-
-        /// <summary>
         ///     Gets or sets a value indicating whether the package file should be signed during a package operation.
         /// </summary>
         [Argument('s', "sign")]
@@ -137,30 +135,30 @@ namespace OpenIIoT.Packager
         /// <param name="args">Command line arguments.</param>
         public static void Main(string[] args)
         {
-            Arguments.Populate();
-
-            string command = "help";
-
-            if (Operands.Count > 1)
-            {
-                command = Operands[1].ToLower();
-            }
-
-            if (Help != default(string))
-            {
-                HelpPrinter.PrintHelp(Help);
-                return;
-            }
-
             try
             {
+                Arguments.Populate();
+
+                string command = "help";
+
+                if (Operands.Count > 1)
+                {
+                    command = Operands[1].ToLower();
+                }
+
+                if (Help != default(string))
+                {
+                    HelpPrinter.PrintHelp(Help);
+                    return;
+                }
+
                 if (command == "manifest")
                 {
                     ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles, ManifestFile);
                 }
                 else if (command == "package")
                 {
-                    PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Passphrase, PublicKeyFile);
+                    PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Passphrase, KeybaseUsername);
                 }
                 else if (command == "trust")
                 {
@@ -176,6 +174,7 @@ namespace OpenIIoT.Packager
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
+                Environment.Exit(1);
             }
         }
     }

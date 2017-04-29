@@ -73,11 +73,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
     <Compile Include="Tools\HelpPrinter.cs" />
     <Compile Include="Tools\ManifestGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\PackageCreator.cs" />
+    <Compile Include="Tools\PackageValidator.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
