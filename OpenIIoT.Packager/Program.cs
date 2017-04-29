@@ -41,11 +41,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using OpenIIoT.Packager.Tools;
-using OpenIIoT.SDK.Package.Manifest;
 using Utility.CommandLine;
-using Newtonsoft.Json.Linq;
 
 namespace OpenIIoT.Packager
 {
@@ -168,8 +165,6 @@ namespace OpenIIoT.Packager
                 }
                 else if (command == "verify")
                 {
-                    Console.WriteLine(Utility.FetchPublicKeyForUser("max"));
-                    Console.WriteLine(Utility.FetchPublicKeyForUser("max"));
                 }
                 else if (command == "help")
                 {

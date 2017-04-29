@@ -150,7 +150,7 @@ namespace OpenIIoT.Packager.Tools
             prefixed("> manifest");
             lineBreak();
 
-            prefixed("[-d|--directory <directory>]\tDirectory containing payload files.");
+            prefixed("<-d|--directory <directory>>\tDirectory containing payload files.");
             prefixed("[-i|--include-resources]\t\tIncludes non-binary/web files.");
             prefixed("[-h|--hash]\t\t\tMarks files to be hashed during packaging.");
             prefixed("[-m|--manifest <file>]\t\tOutput manifest file.");
@@ -177,11 +177,11 @@ namespace OpenIIoT.Packager.Tools
             prefixed("[-s|--sign]\t\t\tDetermines whether the package will be digitally signed.");
             prefixed("[-r|--private-key <file>]\t\tThe ASCII-armored PGP private key file.");
             prefixed("[-a|--passphrase <string>]\t\tThe password for the private key file.");
-            prefixed("[-u|--public-key <file>]\t\tThe ASCII-armored PGP public key file.");
+            prefixed("[-u|--keybase-username <name>]\tThe username of the keybase.io account containing the PGP keys used to create the digest.");
 
             lineBreak();
             prefixed("! ex: 'package -d \"desktop\\coolPlugin\" -m \"manifest.json\" -p \"coolPlugin.opkg\"'");
-            prefixed("! ex: 'package -d \"desktop\\coolPlugin\" -m \"manifest.json\" -p \"coolPlugin.opkg\" -s -r \"privateKey.asc\" -a MyPassword -u \"publicKey.asc\"'");
+            prefixed("! ex: 'package -d \"desktop\\coolPlugin\" -m \"manifest.json\" -p \"coolPlugin.opkg\" -s -r \"privateKey.asc\" -a MyPassword -u \"someUser123'");
             PrintFooter();
         }
 
