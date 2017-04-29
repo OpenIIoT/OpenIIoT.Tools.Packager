@@ -179,7 +179,13 @@ namespace OpenIIoT.Tools.PackageUtility
             }
         }
 
-        private static void Update(object sender, SDK.Package.Packager.PackagerUpdateEventArgs args)
+        /// <summary>
+        ///     Event handler for events raised from the <see cref="SDK.Package.Packager"/> namespace; writes the message and
+        ///     operation to the console window.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="args">The event arguments.</param>
+        private static void Update(object sender, PackagerUpdateEventArgs args)
         {
             Console.WriteLine($"[{args.Operation.ToString()}]: {args.Message}");
         }
