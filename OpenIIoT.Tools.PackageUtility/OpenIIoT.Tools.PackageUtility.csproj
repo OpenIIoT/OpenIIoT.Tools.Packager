@@ -23,7 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>openiiot.tools.packageutility.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\OpenIIoT.Tools.PackageUtility.Tests\OpenIIoT.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\Debug\opkg.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -34,7 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>openiiot.tools.packageutility.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\OpenIIoT.Tools.PackageUtility.Tests\OpenIIoT.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.OpenPgp, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
@@ -81,7 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <AdditionalFiles Include="OpenIIoT.Tools.PackageUtility.ruleset" />
+    <AdditionalFiles Include="OpenIIoT.ruleset" />
     <None Include="packages.config" />
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>

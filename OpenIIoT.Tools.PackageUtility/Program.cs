@@ -145,9 +145,9 @@ namespace OpenIIoT.Tools.PackageUtility
                     command = Operands[1].ToLower();
                 }
 
-                if (Help != default(string))
+                if (Help != default(string) || command == "help")
                 {
-                    HelpPrinter.PrintHelp(Help);
+                    HelpPrinter.PrintHelp(Operands.Count > 2 ? Operands[2] : default(string));
                     return;
                 }
 
@@ -168,10 +168,6 @@ namespace OpenIIoT.Tools.PackageUtility
                 }
                 else if (command == "verify")
                 {
-                }
-                else if (command == "help")
-                {
-                    HelpPrinter.PrintHelp(Operands.Count > 2 ? Operands[2] : default(string));
                 }
             }
             catch (Exception ex)
