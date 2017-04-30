@@ -153,7 +153,9 @@ namespace OpenIIoT.Tools.PackageUtility
 
                 if (command == "manifest")
                 {
-                    Tools.ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles, ManifestFile);
+                    ManifestGenerator.Updated += Update;
+                    ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles, ManifestFile);
+                    ManifestGenerator.Updated += Update;
                 }
                 else if (command == "package")
                 {

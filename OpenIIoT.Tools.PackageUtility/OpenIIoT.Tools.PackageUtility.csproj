@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OpenIIoT.Tools.PackageUtility</RootNamespace>
-    <AssemblyName>OpenIIoT.Tools.PackageUtility</AssemblyName>
+    <AssemblyName>opkg</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -24,7 +24,7 @@
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>openiiot.tools.packageutility.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Debug\OpenIIoT.Tools.PackageUtility.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\opkg.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -75,10 +75,8 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="HelpPrinter.cs" />
-    <Compile Include="Tools\ManifestGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tools\PackageValidator.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
