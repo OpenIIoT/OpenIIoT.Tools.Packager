@@ -41,7 +41,7 @@
 
 using System;
 using System.Collections.Generic;
-using OpenIIoT.SDK.Package.Packager;
+using OpenIIoT.SDK.Package.Packaging;
 using Utility.CommandLine;
 
 namespace OpenIIoT.Tools.PackageUtility
@@ -165,9 +165,15 @@ namespace OpenIIoT.Tools.PackageUtility
                 }
                 else if (command == "trust")
                 {
+                    PackageTruster.Updated += Update;
+                    PackageTruster.TrustPackage(PackageFile, PrivateKeyFile, Passphrase);
+                    PackageCreator.Updated -= Update;
                 }
                 else if (command == "verify")
                 {
+                    PackageVerifier.Updated += Update;
+                    PackageVerifier.VerifyPackage(PackageFile);
+                    PackageVerifier.Updated -= Update;
                 }
             }
             catch (Exception ex)
@@ -178,12 +184,12 @@ namespace OpenIIoT.Tools.PackageUtility
         }
 
         /// <summary>
-        ///     Event handler for events raised from the <see cref="SDK.Package.Packager"/> namespace; writes the message and
+        ///     Event handler for events raised from the <see cref="SDK.Package.Packaging"/> namespace; writes the message and
         ///     operation to the console window.
         /// </summary>
         /// <param name="sender">The object that raised the event.</param>
         /// <param name="args">The event arguments.</param>
-        private static void Update(object sender, PackagerUpdateEventArgs args)
+        private static void Update(object sender, PackagingUpdateEventArgs args)
         {
             Console.WriteLine($"[{args.Operation.ToString()}]: {args.Message}");
         }
