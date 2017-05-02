@@ -82,6 +82,10 @@ namespace OpenIIoT.Tools.PackageUtility
                     PrintManifestHelp();
                     return;
 
+                case "extract-manifest":
+                    PrintExtractManifestHelp();
+                    return;
+
                 case "package":
                     PrintPackageHelp();
                     return;
@@ -113,6 +117,7 @@ namespace OpenIIoT.Tools.PackageUtility
             PrintHeader();
 
             prefixed("> manifest\t\tGenerate a package manifest file.");
+            prefixed("> extract-manifest\tExtract a manifest file from a package.");
             prefixed("> package\t\tCreate a package file.");
             prefixed("> trust\t\tAdd a trust to a signed package file.");
             prefixed("> verify\t\tVerify the integrity of a package file.");
@@ -120,6 +125,25 @@ namespace OpenIIoT.Tools.PackageUtility
             lineBreak();
             prefixed("! use 'help <command>' to get more details about that command.");
 
+            PrintFooter();
+        }
+
+        /// <summary>
+        ///     Prints the help message for the "extract-manifest" command.
+        /// </summary>
+        private static void PrintExtractManifestHelp()
+        {
+            PrintTitle("Extract-Manifest");
+            PrintHeader();
+
+            prefixed("> extract-manifest");
+            lineBreak();
+
+            prefixed("<-p|--package <file>>\tThe input package file (*.opkg).");
+            prefixed("[-m|--manifest <file>]\tOutput manifest file.");
+
+            lineBreak();
+            prefixed("! ex: 'extract-manifest -p \"desktop\\coolPlugin.opkg\" -o \"extractedManifest.json\"'");
             PrintFooter();
         }
 

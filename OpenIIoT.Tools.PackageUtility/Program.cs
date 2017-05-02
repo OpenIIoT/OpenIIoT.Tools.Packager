@@ -43,6 +43,7 @@ using System;
 using System.Collections.Generic;
 using OpenIIoT.SDK.Package.Packaging;
 using Utility.CommandLine;
+using OpenIIoT.SDK.Package.Manifest;
 
 namespace OpenIIoT.Tools.PackageUtility
 {
@@ -58,12 +59,6 @@ namespace OpenIIoT.Tools.PackageUtility
         /// </summary>
         [Argument('h', "hash-files")]
         private static bool HashFiles { get; set; }
-
-        /// <summary>
-        ///     Gets or sets a help topic; used in lieu of the "help" command.
-        /// </summary>
-        [Argument('?', "help")]
-        private static string Help { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether resource files are included when generating a manifest.
@@ -145,17 +140,27 @@ namespace OpenIIoT.Tools.PackageUtility
                     command = Operands[1].ToLower();
                 }
 
-                if (Help != default(string) || command == "help")
-                {
-                    HelpPrinter.PrintHelp(Operands.Count > 2 ? Operands[2] : default(string));
-                    return;
-                }
-
                 if (command == "manifest")
                 {
                     ManifestGenerator.Updated += Update;
-                    ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles, ManifestFile);
-                    ManifestGenerator.Updated += Update;
+                    PackageManifest manifest = ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles, ManifestFile);
+                    ManifestGenerator.Updated -= Update;
+
+                    if (manifest != default(PackageManifest))
+                    {
+                        Console.WriteLine(manifest.ToJson());
+                    }
+                }
+                else if (command == "extract-manifest")
+                {
+                    ManifestExtractor.Updated += Update;
+                    PackageManifest manifest = ManifestExtractor.ExtractManifest(PackageFile, ManifestFile);
+                    ManifestExtractor.Updated -= Update;
+
+                    if (manifest != default(PackageManifest))
+                    {
+                        Console.WriteLine(manifest.ToJson());
+                    }
                 }
                 else if (command == "package")
                 {
@@ -174,6 +179,10 @@ namespace OpenIIoT.Tools.PackageUtility
                     PackageVerifier.Updated += Update;
                     PackageVerifier.VerifyPackage(PackageFile);
                     PackageVerifier.Updated -= Update;
+                }
+                else
+                {
+                    HelpPrinter.PrintHelp(Operands.Count > 2 ? Operands[2] : default(string));
                 }
             }
             catch (Exception ex)
