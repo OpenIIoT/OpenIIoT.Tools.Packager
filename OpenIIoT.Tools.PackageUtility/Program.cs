@@ -41,9 +41,9 @@
 
 using System;
 using System.Collections.Generic;
+using OpenIIoT.SDK.Package.Manifest;
 using OpenIIoT.SDK.Package.Packaging;
 using Utility.CommandLine;
-using OpenIIoT.SDK.Package.Manifest;
 
 namespace OpenIIoT.Tools.PackageUtility
 {
@@ -146,7 +146,7 @@ namespace OpenIIoT.Tools.PackageUtility
                     PackageManifest manifest = ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles, ManifestFile);
                     ManifestGenerator.Updated -= Update;
 
-                    if (manifest != default(PackageManifest))
+                    if (string.IsNullOrEmpty(ManifestFile) && manifest != default(PackageManifest))
                     {
                         Console.WriteLine(manifest.ToJson());
                     }
@@ -157,7 +157,7 @@ namespace OpenIIoT.Tools.PackageUtility
                     PackageManifest manifest = ManifestExtractor.ExtractManifest(PackageFile, ManifestFile);
                     ManifestExtractor.Updated -= Update;
 
-                    if (manifest != default(PackageManifest))
+                    if (string.IsNullOrEmpty(ManifestFile) && manifest != default(PackageManifest))
                     {
                         Console.WriteLine(manifest.ToJson());
                     }

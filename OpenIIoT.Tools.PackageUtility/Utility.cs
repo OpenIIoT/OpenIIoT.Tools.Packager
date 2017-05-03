@@ -39,10 +39,7 @@
                                                                                                  ▀████▀
                                                                                                    ▀▀                            */
 
-using System;
-using System.IO;
 using Newtonsoft.Json;
-using OpenIIoT.SDK.Package.Manifest;
 
 namespace OpenIIoT.Tools.PackageUtility
 {
