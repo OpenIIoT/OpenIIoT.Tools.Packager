@@ -168,6 +168,12 @@ namespace OpenIIoT.Tools.PackageUtility
                     PackageCreator.CreatePackage(Directory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Passphrase, KeybaseUsername);
                     PackageCreator.Updated -= Update;
                 }
+                else if (command == "extract-package")
+                {
+                    PackageExtractor.Updated += Update;
+                    PackageExtractor.ExtractPackage(PackageFile, Directory);
+                    PackageExtractor.Updated -= Update;
+                }
                 else if (command == "trust")
                 {
                     PackageTruster.Updated += Update;
