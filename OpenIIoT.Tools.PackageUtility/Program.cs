@@ -55,6 +55,12 @@ namespace OpenIIoT.Tools.PackageUtility
         #region Private Properties
 
         /// <summary>
+        ///     Gets or sets the input directory for manifest and package generation.
+        /// </summary>
+        [Argument('d', "directory")]
+        private static string Directory { get; set; }
+
+        /// <summary>
         ///     Gets or sets a value indicating whether files are hashed when generating a manifest.
         /// </summary>
         [Argument('h', "hash-files")]
@@ -65,12 +71,6 @@ namespace OpenIIoT.Tools.PackageUtility
         /// </summary>
         [Argument('i', "include-resources")]
         private static bool IncludeResources { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the input directory for manifest and package generation.
-        /// </summary>
-        [Argument('d', "directory")]
-        private static string InputDirectory { get; set; }
 
         /// <summary>
         ///     Gets or sets the Keybase.io username of the account hosting the PGP public key used for digest verification.
@@ -143,7 +143,7 @@ namespace OpenIIoT.Tools.PackageUtility
                 if (command == "manifest")
                 {
                     ManifestGenerator.Updated += Update;
-                    PackageManifest manifest = ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles, ManifestFile);
+                    PackageManifest manifest = ManifestGenerator.GenerateManifest(Directory, IncludeResources, HashFiles, ManifestFile);
                     ManifestGenerator.Updated -= Update;
 
                     if (string.IsNullOrEmpty(ManifestFile) && manifest != default(PackageManifest))
@@ -165,7 +165,7 @@ namespace OpenIIoT.Tools.PackageUtility
                 else if (command == "package")
                 {
                     PackageCreator.Updated += Update;
-                    PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Passphrase, KeybaseUsername);
+                    PackageCreator.CreatePackage(Directory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Passphrase, KeybaseUsername);
                     PackageCreator.Updated -= Update;
                 }
                 else if (command == "trust")
