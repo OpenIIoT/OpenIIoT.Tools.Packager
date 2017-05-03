@@ -82,8 +82,16 @@ namespace OpenIIoT.Tools.PackageUtility
                     PrintManifestHelp();
                     return;
 
+                case "extract-manifest":
+                    PrintExtractManifestHelp();
+                    return;
+
                 case "package":
                     PrintPackageHelp();
+                    return;
+
+                case "extract-package":
+                    PrintExtractPackageHelp();
                     return;
 
                 case "verify":
@@ -113,13 +121,53 @@ namespace OpenIIoT.Tools.PackageUtility
             PrintHeader();
 
             prefixed("> manifest\t\tGenerate a package manifest file.");
+            prefixed("> extract-manifest\tExtract a manifest file from a package.");
             prefixed("> package\t\tCreate a package file.");
+            prefixed("> extract-package\tExtract a package file.");
             prefixed("> trust\t\tAdd a trust to a signed package file.");
             prefixed("> verify\t\tVerify the integrity of a package file.");
 
             lineBreak();
             prefixed("! use 'help <command>' to get more details about that command.");
 
+            PrintFooter();
+        }
+
+        /// <summary>
+        ///     Prints the help message for the "extract-manifest" command.
+        /// </summary>
+        private static void PrintExtractManifestHelp()
+        {
+            PrintTitle("Extract-Manifest");
+            PrintHeader();
+
+            prefixed("> extract-manifest");
+            lineBreak();
+
+            prefixed("<-p|--package <file>>\tThe input package file (*.opkg).");
+            prefixed("[-m|--manifest <file>]\tThe output manifest file.");
+
+            lineBreak();
+            prefixed("! ex: 'extract-manifest -p \"desktop\\coolPlugin.opkg\" -o \"extractedManifest.json\"'");
+            PrintFooter();
+        }
+
+        /// <summary>
+        ///     Prints the help message for the "extract-package" command.
+        /// </summary>
+        private static void PrintExtractPackageHelp()
+        {
+            PrintTitle("Extract-Package");
+            PrintHeader();
+
+            prefixed("> extract-package");
+            lineBreak();
+
+            prefixed("<-p|--package <file>>\t\tThe input package file (*.opkg).");
+            prefixed("<-d|--directory <directory>]\tThe output directory.");
+
+            lineBreak();
+            prefixed("! ex: 'extract-package -p \"desktop\\coolPlugin.opkg\" -d \"desktop\\extracted\"");
             PrintFooter();
         }
 
@@ -150,10 +198,10 @@ namespace OpenIIoT.Tools.PackageUtility
             prefixed("> manifest");
             lineBreak();
 
-            prefixed("<-d|--directory <directory>>\tDirectory containing payload files.");
-            prefixed("[-i|--include-resources]\t\tIncludes non-binary/web files.");
-            prefixed("[-h|--hash]\t\t\tMarks files to be hashed during packaging.");
-            prefixed("[-m|--manifest <file>]\t\tOutput manifest file.");
+            prefixed("<-d|--directory <directory>>\tThe directory containing payload files.");
+            prefixed("[-i|--include-resources]\t\tInclude non-binary/web files.");
+            prefixed("[-h|--hash]\t\t\tMark files to be hashed during packaging.");
+            prefixed("[-m|--manifest <file>]\t\tThe output manifest file.");
 
             lineBreak();
             prefixed("! ex: 'manifest -hi -d \"desktop\\coolPlugin\" -o \"manifest.json\"'");
@@ -171,7 +219,7 @@ namespace OpenIIoT.Tools.PackageUtility
             prefixed("> package");
             lineBreak();
 
-            prefixed("<-d|--directory <directory>>\tDirectory containing payload files.");
+            prefixed("<-d|--directory <directory>>\tThe directory containing payload files.");
             prefixed("<-m|--manifest <file>>\t\tThe manifest for the package (manifest.json, generate with 'manifest')");
             prefixed("<-p|--package <file>>\t\tThe output package file (*.opkg).");
             prefixed("[-s|--sign]\t\t\tDetermines whether the package will be digitally signed.");

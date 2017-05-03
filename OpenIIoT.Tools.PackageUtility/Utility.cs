@@ -39,10 +39,7 @@
                                                                                                  ▀████▀
                                                                                                    ▀▀                            */
 
-using System;
-using System.IO;
 using Newtonsoft.Json;
-using OpenIIoT.SDK.Package.Manifest;
 
 namespace OpenIIoT.Tools.PackageUtility
 {
@@ -52,43 +49,6 @@ namespace OpenIIoT.Tools.PackageUtility
     public static class Utility
     {
         #region Public Methods
-
-        /// <summary>
-        ///     Determines and returns the <see cref="PackageManifestFileType"/> matching the specified file.
-        /// </summary>
-        /// <param name="file">The file for which the <see cref="PackageManifestFileType"/> is to be determined.</param>
-        /// <returns>The type of the specified file.</returns>
-        public static PackageManifestFileType GetFileType(string file)
-        {
-            if (Path.GetExtension(file) == "dll")
-            {
-                return PackageManifestFileType.Binary;
-            }
-            else if (Path.GetFileName(file).Equals("index.html", StringComparison.OrdinalIgnoreCase) || Path.GetFileName(file).Equals("index.htm", StringComparison.OrdinalIgnoreCase))
-            {
-                return PackageManifestFileType.WebIndex;
-            }
-            else
-            {
-                return PackageManifestFileType.Resource;
-            }
-        }
-
-        /// <summary>
-        ///     Returns the path of the specified file, relative to the specified base directory.
-        /// </summary>
-        /// <param name="baseDirectory">The base directory of the relative file reference.</param>
-        /// <param name="file">The file for which the relative path is to be returned.</param>
-        /// <returns>The path of the specified file, relative to the specified base directory.</returns>
-        public static string GetRelativePath(string baseDirectory, string file)
-        {
-            if (!baseDirectory.EndsWith(Path.DirectorySeparatorChar.ToString()))
-            {
-                baseDirectory += Path.DirectorySeparatorChar;
-            }
-
-            return file.Replace(baseDirectory, string.Empty);
-        }
 
         /// <summary>
         ///     Serializes and returns as json the specified object.

@@ -41,6 +41,7 @@
 
 using System;
 using System.Collections.Generic;
+using OpenIIoT.SDK.Package.Manifest;
 using OpenIIoT.SDK.Package.Packaging;
 using Utility.CommandLine;
 
@@ -54,28 +55,22 @@ namespace OpenIIoT.Tools.PackageUtility
         #region Private Properties
 
         /// <summary>
+        ///     Gets or sets the input directory for manifest and package generation.
+        /// </summary>
+        [Argument('d', "directory")]
+        private static string Directory { get; set; }
+
+        /// <summary>
         ///     Gets or sets a value indicating whether files are hashed when generating a manifest.
         /// </summary>
         [Argument('h', "hash-files")]
         private static bool HashFiles { get; set; }
 
         /// <summary>
-        ///     Gets or sets a help topic; used in lieu of the "help" command.
-        /// </summary>
-        [Argument('?', "help")]
-        private static string Help { get; set; }
-
-        /// <summary>
         ///     Gets or sets a value indicating whether resource files are included when generating a manifest.
         /// </summary>
         [Argument('i', "include-resources")]
         private static bool IncludeResources { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the input directory for manifest and package generation.
-        /// </summary>
-        [Argument('d', "directory")]
-        private static string InputDirectory { get; set; }
 
         /// <summary>
         ///     Gets or sets the Keybase.io username of the account hosting the PGP public key used for digest verification.
@@ -145,23 +140,39 @@ namespace OpenIIoT.Tools.PackageUtility
                     command = Operands[1].ToLower();
                 }
 
-                if (Help != default(string) || command == "help")
-                {
-                    HelpPrinter.PrintHelp(Operands.Count > 2 ? Operands[2] : default(string));
-                    return;
-                }
-
                 if (command == "manifest")
                 {
                     ManifestGenerator.Updated += Update;
-                    ManifestGenerator.GenerateManifest(InputDirectory, IncludeResources, HashFiles, ManifestFile);
-                    ManifestGenerator.Updated += Update;
+                    PackageManifest manifest = ManifestGenerator.GenerateManifest(Directory, IncludeResources, HashFiles, ManifestFile);
+                    ManifestGenerator.Updated -= Update;
+
+                    if (string.IsNullOrEmpty(ManifestFile) && manifest != default(PackageManifest))
+                    {
+                        Console.WriteLine(manifest.ToJson());
+                    }
+                }
+                else if (command == "extract-manifest")
+                {
+                    ManifestExtractor.Updated += Update;
+                    PackageManifest manifest = ManifestExtractor.ExtractManifest(PackageFile, ManifestFile);
+                    ManifestExtractor.Updated -= Update;
+
+                    if (string.IsNullOrEmpty(ManifestFile) && manifest != default(PackageManifest))
+                    {
+                        Console.WriteLine(manifest.ToJson());
+                    }
                 }
                 else if (command == "package")
                 {
                     PackageCreator.Updated += Update;
-                    PackageCreator.CreatePackage(InputDirectory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Passphrase, KeybaseUsername);
+                    PackageCreator.CreatePackage(Directory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Passphrase, KeybaseUsername);
                     PackageCreator.Updated -= Update;
+                }
+                else if (command == "extract-package")
+                {
+                    PackageExtractor.Updated += Update;
+                    PackageExtractor.ExtractPackage(PackageFile, Directory);
+                    PackageExtractor.Updated -= Update;
                 }
                 else if (command == "trust")
                 {
@@ -174,6 +185,10 @@ namespace OpenIIoT.Tools.PackageUtility
                     PackageVerifier.Updated += Update;
                     PackageVerifier.VerifyPackage(PackageFile);
                     PackageVerifier.Updated -= Update;
+                }
+                else
+                {
+                    HelpPrinter.PrintHelp(Operands.Count > 2 ? Operands[2] : default(string));
                 }
             }
             catch (Exception ex)
