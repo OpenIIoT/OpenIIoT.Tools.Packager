@@ -121,7 +121,7 @@ namespace OpenIIoT.Tools.PackageUtility
             PrintHeader();
 
             prefixed("> manifest\t\tGenerate a package manifest file.");
-            prefixed("> extract-manifest\tExtract a manifest file from a package.");
+            prefixed("> extract-manifest\tExtract a package manifest file from a package.");
             prefixed("> package\t\tCreate a package file.");
             prefixed("> extract-package\tExtract a package file.");
             prefixed("> trust\t\tAdd a trust to a signed package file.");
