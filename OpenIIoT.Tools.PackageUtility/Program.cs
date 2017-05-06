@@ -91,6 +91,12 @@ namespace OpenIIoT.Tools.PackageUtility
         private static List<string> Operands { get; set; }
 
         /// <summary>
+        ///     Gets or sets a value indicating whether an output file should be overwritten.
+        /// </summary>
+        [Argument('o', "overwrite")]
+        private static bool Overwrite { get; set; }
+
+        /// <summary>
         ///     Gets or sets the package for package generation, signing, and verification.
         /// </summary>
         [Argument('p', "package")]
@@ -177,7 +183,7 @@ namespace OpenIIoT.Tools.PackageUtility
                 else if (command == "extract-package")
                 {
                     PackageExtractor.Updated += Update;
-                    PackageExtractor.ExtractPackage(PackageFile, Directory, SkipVerification);
+                    PackageExtractor.ExtractPackage(PackageFile, Directory, Overwrite, SkipVerification);
                     PackageExtractor.Updated -= Update;
                 }
                 else if (command == "trust")

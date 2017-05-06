@@ -165,10 +165,11 @@ namespace OpenIIoT.Tools.PackageUtility
 
             prefixed("<-p|--package <file>>\t\tThe input package file.");
             prefixed("<-d|--directory <directory>]\tThe output directory.");
+            prefixed("[-o|--overwrite]\t\t\tDeletes the output directory prior to extraction, if it exists.");
             prefixed("[-v|--skip-verification]\t\tSkips the verification step prior to extraction.");
 
             lineBreak();
-            prefixed("! ex: 'extract-package -p \"desktop\\coolPlugin.opkg\" -d \"desktop\\extracted\"");
+            prefixed("! ex: 'extract-package -ov -p \"desktop\\coolPlugin.opkg\" -d \"desktop\\extracted\"");
             PrintFooter();
         }
 
