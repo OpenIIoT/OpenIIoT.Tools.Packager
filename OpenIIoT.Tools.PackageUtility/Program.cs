@@ -114,6 +114,12 @@ namespace OpenIIoT.Tools.PackageUtility
         [Argument('s', "sign")]
         private static bool SignPackage { get; set; }
 
+        /// <summary>
+        ///     Gets or sets a value indicating whether verification is to be skipped when extracting a pacakge file.
+        /// </summary>
+        [Argument('v', "skip-verification")]
+        private static bool SkipVerification { get; set; }
+
         #endregion Private Properties
 
         #region Private Methods
@@ -171,7 +177,7 @@ namespace OpenIIoT.Tools.PackageUtility
                 else if (command == "extract-package")
                 {
                     PackageExtractor.Updated += Update;
-                    PackageExtractor.ExtractPackage(PackageFile, Directory);
+                    PackageExtractor.ExtractPackage(PackageFile, Directory, SkipVerification);
                     PackageExtractor.Updated -= Update;
                 }
                 else if (command == "trust")
@@ -194,11 +200,6 @@ namespace OpenIIoT.Tools.PackageUtility
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
-
-                if (command != "help")
-                {
-                    HelpPrinter.PrintHelp(command);
-                }
 
                 Environment.Exit(1);
             }
