@@ -91,6 +91,12 @@ namespace OpenIIoT.Tools.PackageUtility
         private static List<string> Operands { get; set; }
 
         /// <summary>
+        ///     Gets or sets a value indicating whether an output file should be overwritten.
+        /// </summary>
+        [Argument('o', "overwrite")]
+        private static bool Overwrite { get; set; }
+
+        /// <summary>
         ///     Gets or sets the package for package generation, signing, and verification.
         /// </summary>
         [Argument('p', "package")]
@@ -114,6 +120,12 @@ namespace OpenIIoT.Tools.PackageUtility
         [Argument('s', "sign")]
         private static bool SignPackage { get; set; }
 
+        /// <summary>
+        ///     Gets or sets a value indicating whether verification is to be skipped when extracting a pacakge file.
+        /// </summary>
+        [Argument('v', "skip-verification")]
+        private static bool SkipVerification { get; set; }
+
         #endregion Private Properties
 
         #region Private Methods
@@ -129,11 +141,11 @@ namespace OpenIIoT.Tools.PackageUtility
         /// <param name="args">Command line arguments.</param>
         public static void Main(string[] args)
         {
+            string command = string.Empty;
+
             try
             {
                 Arguments.Populate();
-
-                string command = "help";
 
                 if (Operands.Count > 1)
                 {
@@ -171,7 +183,7 @@ namespace OpenIIoT.Tools.PackageUtility
                 else if (command == "extract-package")
                 {
                     PackageExtractor.Updated += Update;
-                    PackageExtractor.ExtractPackage(PackageFile, Directory);
+                    PackageExtractor.ExtractPackage(PackageFile, Directory, Overwrite, SkipVerification);
                     PackageExtractor.Updated -= Update;
                 }
                 else if (command == "trust")
@@ -194,6 +206,7 @@ namespace OpenIIoT.Tools.PackageUtility
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
+
                 Environment.Exit(1);
             }
         }

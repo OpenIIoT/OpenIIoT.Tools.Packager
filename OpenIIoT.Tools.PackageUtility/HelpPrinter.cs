@@ -121,7 +121,7 @@ namespace OpenIIoT.Tools.PackageUtility
             PrintHeader();
 
             prefixed("> manifest\t\tGenerate a package manifest file.");
-            prefixed("> extract-manifest\tExtract a manifest file from a package.");
+            prefixed("> extract-manifest\tExtract a package manifest file from a package.");
             prefixed("> package\t\tCreate a package file.");
             prefixed("> extract-package\tExtract a package file.");
             prefixed("> trust\t\tAdd a trust to a signed package file.");
@@ -144,7 +144,7 @@ namespace OpenIIoT.Tools.PackageUtility
             prefixed("> extract-manifest");
             lineBreak();
 
-            prefixed("<-p|--package <file>>\tThe input package file (*.opkg).");
+            prefixed("<-p|--package <file>>\tThe input package file.");
             prefixed("[-m|--manifest <file>]\tThe output manifest file.");
 
             lineBreak();
@@ -163,11 +163,13 @@ namespace OpenIIoT.Tools.PackageUtility
             prefixed("> extract-package");
             lineBreak();
 
-            prefixed("<-p|--package <file>>\t\tThe input package file (*.opkg).");
+            prefixed("<-p|--package <file>>\t\tThe input package file.");
             prefixed("<-d|--directory <directory>]\tThe output directory.");
+            prefixed("[-o|--overwrite]\t\t\tDeletes the output directory prior to extraction, if it exists.");
+            prefixed("[-v|--skip-verification]\t\tSkips the verification step prior to extraction.");
 
             lineBreak();
-            prefixed("! ex: 'extract-package -p \"desktop\\coolPlugin.opkg\" -d \"desktop\\extracted\"");
+            prefixed("! ex: 'extract-package -ov -p \"desktop\\coolPlugin.opkg\" -d \"desktop\\extracted\"");
             PrintFooter();
         }
 
@@ -220,9 +222,9 @@ namespace OpenIIoT.Tools.PackageUtility
             lineBreak();
 
             prefixed("<-d|--directory <directory>>\tThe directory containing payload files.");
-            prefixed("<-m|--manifest <file>>\t\tThe manifest for the package (manifest.json, generate with 'manifest')");
-            prefixed("<-p|--package <file>>\t\tThe output package file (*.opkg).");
-            prefixed("[-s|--sign]\t\t\tDetermines whether the package will be digitally signed.");
+            prefixed("<-m|--manifest <file>>\t\tThe input manifest file.");
+            prefixed("<-p|--package <file>>\t\tThe output package file.");
+            prefixed("[-s|--sign]\t\t\tSign the package file.");
             prefixed("[-r|--private-key <file>]\t\tThe ASCII-armored PGP private key file.");
             prefixed("[-a|--passphrase <string>]\t\tThe password for the private key file.");
             prefixed("[-u|--keybase-username <name>]\tThe username of the keybase.io account containing the PGP keys used to create the digest.");
