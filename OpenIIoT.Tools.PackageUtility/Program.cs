@@ -129,11 +129,11 @@ namespace OpenIIoT.Tools.PackageUtility
         /// <param name="args">Command line arguments.</param>
         public static void Main(string[] args)
         {
+            string command = string.Empty;
+
             try
             {
                 Arguments.Populate();
-
-                string command = "help";
 
                 if (Operands.Count > 1)
                 {
@@ -194,6 +194,12 @@ namespace OpenIIoT.Tools.PackageUtility
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
+
+                if (command != "help")
+                {
+                    HelpPrinter.PrintHelp(command);
+                }
+
                 Environment.Exit(1);
             }
         }
