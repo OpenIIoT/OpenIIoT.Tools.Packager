@@ -221,7 +221,18 @@ namespace OpenIIoT.Tools.PackageUtility
         /// <param name="args">The event arguments.</param>
         private static void Update(object sender, PackagingUpdateEventArgs args)
         {
-            Console.WriteLine($"[{args.Operation.ToString()}]: {args.Message}");
+            string prefix = string.Empty;
+
+            if (args.Type == PackagingUpdateType.Verbose)
+            {
+                prefix = new string(' ', 4);
+            }
+            else if (args.Type == PackagingUpdateType.Success)
+            {
+                prefix = "√ ";
+            }
+
+            Console.WriteLine($"[{args.Operation.ToString()}]: {prefix}{args.Message}");
         }
     }
 
