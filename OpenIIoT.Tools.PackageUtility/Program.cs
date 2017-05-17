@@ -156,9 +156,10 @@ namespace OpenIIoT.Tools.PackageUtility
 
                 if (command == "manifest")
                 {
-                    ManifestGenerator.Updated += Update;
-                    PackageManifest manifest = ManifestGenerator.GenerateManifest(Directory, IncludeResources, HashFiles, ManifestFile);
-                    ManifestGenerator.Updated -= Update;
+                    ManifestGenerator generator = new ManifestGenerator();
+                    generator.Updated += Update;
+
+                    PackageManifest manifest = generator.GenerateManifest(Directory, IncludeResources, HashFiles, ManifestFile);
 
                     if (string.IsNullOrEmpty(ManifestFile) && manifest != default(PackageManifest))
                     {
@@ -167,9 +168,10 @@ namespace OpenIIoT.Tools.PackageUtility
                 }
                 else if (command == "extract-manifest")
                 {
-                    ManifestExtractor.Updated += Update;
-                    PackageManifest manifest = ManifestExtractor.ExtractManifest(PackageFile, ManifestFile);
-                    ManifestExtractor.Updated -= Update;
+                    ManifestExtractor extractor = new ManifestExtractor();
+                    extractor.Updated += Update;
+
+                    PackageManifest manifest = extractor.ExtractManifest(PackageFile, ManifestFile);
 
                     if (string.IsNullOrEmpty(ManifestFile) && manifest != default(PackageManifest))
                     {
@@ -178,27 +180,27 @@ namespace OpenIIoT.Tools.PackageUtility
                 }
                 else if (command == "package")
                 {
-                    PackageCreator.Updated += Update;
-                    PackageCreator.CreatePackage(Directory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Passphrase, KeybaseUsername);
-                    PackageCreator.Updated -= Update;
+                    PackageCreator creator = new PackageCreator();
+                    creator.Updated += Update;
+                    creator.CreatePackage(Directory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Passphrase, KeybaseUsername);
                 }
                 else if (command == "extract-package")
                 {
-                    PackageExtractor.Updated += Update;
-                    PackageExtractor.ExtractPackage(PackageFile, Directory, Overwrite, SkipVerification);
-                    PackageExtractor.Updated -= Update;
+                    PackageExtractor extractor = new PackageExtractor();
+                    extractor.Updated += Update;
+                    extractor.ExtractPackage(PackageFile, Directory, Overwrite, SkipVerification);
                 }
                 else if (command == "trust")
                 {
-                    PackageTruster.Updated += Update;
-                    PackageTruster.TrustPackage(PackageFile, PrivateKeyFile, Passphrase);
-                    PackageCreator.Updated -= Update;
+                    PackageTruster truster = new PackageTruster();
+                    truster.Updated += Update;
+                    truster.TrustPackage(PackageFile, PrivateKeyFile, Passphrase);
                 }
                 else if (command == "verify")
                 {
-                    PackageVerifier.Updated += Update;
-                    PackageVerifier.VerifyPackage(PackageFile);
-                    PackageVerifier.Updated -= Update;
+                    PackageVerifier verifier = new PackageVerifier();
+                    verifier.Updated += Update;
+                    verifier.VerifyPackage(PackageFile);
                 }
                 else
                 {
@@ -221,7 +223,18 @@ namespace OpenIIoT.Tools.PackageUtility
         /// <param name="args">The event arguments.</param>
         private static void Update(object sender, PackagingUpdateEventArgs args)
         {
-            Console.WriteLine($"[{args.Operation.ToString()}]: {args.Message}");
+            string prefix = string.Empty;
+
+            if (args.Type == PackagingUpdateType.Verbose)
+            {
+                prefix = new string(' ', 4);
+            }
+            else if (args.Type == PackagingUpdateType.Success)
+            {
+                prefix = "√ ";
+            }
+
+            Console.WriteLine($"[{args.Operation.ToString()}]: {prefix}{args.Message}");
         }
     }
 
