@@ -43,9 +43,11 @@ using System;
 using System.Collections.Generic;
 using OpenIIoT.SDK.Common;
 using OpenIIoT.SDK.Package.Manifest;
-using OpenIIoT.SDK.Package.Packaging;
-using OpenIIoT.SDK.Package.Packaging.Operations;
+using OpenIIoT.SDK.Packaging;
+using OpenIIoT.SDK.Packaging.Operations;
 using Utility.CommandLine;
+
+using OpenIIoT.SDK.Packaging.Operations;
 
 namespace OpenIIoT.Tools.PackageUtility
 {
