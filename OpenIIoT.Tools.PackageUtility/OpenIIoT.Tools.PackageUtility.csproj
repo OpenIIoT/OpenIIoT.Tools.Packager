@@ -38,12 +38,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="OpenIIoT.SDK, Version=0.5.0.22727, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OpenIIoT.SDK, Version=0.5.0.24955, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\OpenIIoT.Core\OpenIIoT.Core\bin\Debug\OpenIIoT.SDK.dll</HintPath>
+      <HintPath>..\..\OpenIIoT.Core\Source\OpenIIoT.SDK\bin\Debug\OpenIIoT.SDK.dll</HintPath>
     </Reference>
-    <Reference Include="OpenIIoT.SDK.Packaging">
-      <HintPath>..\..\OpenIIoT.SDK.Packaging\OpenIIoT.SDK.Packaging\bin\Debug\OpenIIoT.SDK.Packaging.dll</HintPath>
+    <Reference Include="OpenIIoT.SDK.Packaging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\OpenIIoT.Core\Source\OpenIIoT.SDK.Packaging\bin\Debug\OpenIIoT.SDK.Packaging.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
