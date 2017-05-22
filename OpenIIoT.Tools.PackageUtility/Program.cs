@@ -47,8 +47,6 @@ using OpenIIoT.SDK.Packaging;
 using OpenIIoT.SDK.Packaging.Operations;
 using Utility.CommandLine;
 
-using OpenIIoT.SDK.Packaging.Operations;
-
 namespace OpenIIoT.Tools.PackageUtility
 {
     /// <summary>
@@ -218,8 +216,8 @@ namespace OpenIIoT.Tools.PackageUtility
         }
 
         /// <summary>
-        ///     Event handler for events raised from the <see cref="SDK.Package.Packaging"/> namespace; writes the message and
-        ///     operation to the console window.
+        ///     Event handler for events raised from the <see cref="SDK.Packaging"/> namespace; writes the message and operation to
+        ///     the console window.
         /// </summary>
         /// <param name="sender">The object that raised the event.</param>
         /// <param name="args">The event arguments.</param>
