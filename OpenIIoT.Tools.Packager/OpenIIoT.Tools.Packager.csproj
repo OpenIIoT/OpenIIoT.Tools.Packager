@@ -7,7 +7,7 @@
     <ProjectGuid>{EBE1344B-38FD-4266-A5D9-06AD10FE0AEE}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenIIoT.Tools.PackageUtility</RootNamespace>
+    <RootNamespace>OpenIIoT.Tools.Packager</RootNamespace>
     <AssemblyName>opkg</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -38,13 +38,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="OpenIIoT.SDK, Version=0.5.0.24955, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\OpenIIoT.Core\Source\OpenIIoT.SDK\bin\Debug\OpenIIoT.SDK.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenIIoT.SDK.Packaging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\OpenIIoT.Core\Source\OpenIIoT.SDK.Packaging\bin\Debug\OpenIIoT.SDK.Packaging.dll</HintPath>
+    <Reference Include="OpenIIoT.SDK.Packaging, Version=0.9.0.23796, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenIIoT.SDK.Packaging.0.9.0.23796-beta\lib\OpenIIoT.SDK.Packaging.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

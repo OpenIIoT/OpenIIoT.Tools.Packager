@@ -41,7 +41,6 @@
 
 using System;
 using System.Collections.Generic;
-using OpenIIoT.SDK.Common;
 using OpenIIoT.SDK.Packaging;
 using OpenIIoT.SDK.Packaging.Manifest;
 using OpenIIoT.SDK.Packaging.Operations;
