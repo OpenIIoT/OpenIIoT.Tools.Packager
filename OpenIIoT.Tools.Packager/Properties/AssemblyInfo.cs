@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("OpenIIoT.Packager")]
+[assembly: AssemblyTitle("OpenIIoT.Tools.Packager")]
 [assembly: AssemblyDescription("A tool for the creation and management of OpenIIoT package files.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("OpenIIoT")]
-[assembly: AssemblyProduct("OpenIIoT.Packager")]
+[assembly: AssemblyProduct("OpenIIoT.Tools.Packager")]
 [assembly: AssemblyCopyright("Copyright (C) 2016-2017 JP Dillingham (jp@dillingham.ws)")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

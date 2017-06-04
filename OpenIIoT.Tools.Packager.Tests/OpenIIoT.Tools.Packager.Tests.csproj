@@ -28,6 +28,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>openiiot.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Debug\OpenIIoT.Tools.Packager.Tests.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -36,6 +38,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>openiiot.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Release\OpenIIoT.Tools.Packager.Tests.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="OpenIIoT.SDK.Packaging, Version=0.9.0.23796, Culture=neutral, processorArchitecture=MSIL">
@@ -73,7 +77,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <AdditionalFiles Include="OpenIIoT.ruleset" />
     <None Include="packages.config" />
+    <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIIoT.Tools.Packager\OpenIIoT.Tools.Packager.csproj">

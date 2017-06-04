@@ -1,9 +1,9 @@
 os:
   - linux
 language: csharp
-solution: OpenIIoT.SDK.Packager.sln
+solution: OpenIIoT.Tools.Packager.sln
 install:
-  - nuget restore OpenIIoT.SDK.Packager.sln
+  - nuget restore OpenIIoT.Tools.Packager.sln
 script:
-  - xbuild /p:Configuration=Release OpenIIoT.SDK.Packager.sln
-  - mono ./packages/xunit.runner.console.2.1.0/tools/xunit.console.exe ./OpenIIoT.SDK.Packager.Tests/bin/Release/OpenIIoT.SDK.Packager.Tests.dll
+  - xbuild /p:Configuration=Release OpenIIoT.Tools.Packager.sln
+  - mono ./packages/xunit.runner.console.2.1.0/tools/xunit.console.exe ./OpenIIoT.Tools.Packager.Tests/bin/Release/OpenIIoT.Tools.Packager.Tests.dll
