@@ -2,10 +2,10 @@ version: 0.9.0.{build}
 before_build:
 - cmd: nuget restore
 build:
-  project: OpenIIoT.SDK.Packager.sln
+  project: OpenIIoT.Tools.Packager.sln
   verbosity: minimal
 test_script:
-- .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"%xunit20%\xunit.console.x86.exe" -targetargs:"C:\projects\openiiot-sdk-packager\OpenIIoT.SDK.Packager.Tests\bin\Debug\OpenIIoT.SDK.Packager.Tests.dll -noshadow -appveyor" -returntargetcode -filter:"+[*]* -[*.Tests]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:.\coverage.xml
+- .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"%xunit20%\xunit.console.x86.exe" -targetargs:"C:\projects\openiiot-tools-packager\OpenIIoT.Tools.Packager.Tests\bin\Debug\OpenIIoT.Tools.Packager.Tests.dll -noshadow -appveyor" -returntargetcode -filter:"+[*]* -[*.Tests]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:.\coverage.xml
 - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
 - pip install codecov
 - codecov -f "coverage.xml"
