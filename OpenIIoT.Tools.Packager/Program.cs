@@ -46,7 +46,7 @@ using OpenIIoT.SDK.Packaging.Manifest;
 using OpenIIoT.SDK.Packaging.Operations;
 using Utility.CommandLine;
 
-namespace OpenIIoT.Tools.PackageUtility
+namespace OpenIIoT.Tools.Packager
 {
     /// <summary>
     ///     The main Application class.
