@@ -48,6 +48,7 @@
                                                                                                  ▀████▀
                                                                                                    ▀▀                            */
 
+using System;
 using Xunit;
 
 namespace OpenIIoT.Tools.Packager.Tests
@@ -59,9 +60,22 @@ namespace OpenIIoT.Tools.Packager.Tests
     {
         #region Public Methods
 
+        /// <summary>
+        ///     Tests the <see cref="Packager.HelpPrinter.PrintHelp(string)"/> method.
+        /// </summary>
         [Fact]
         public void PrintHelp()
         {
+            Packager.HelpPrinter.PrintHelp();
+            Packager.HelpPrinter.PrintHelp(string.Empty);
+            Packager.HelpPrinter.PrintHelp(null);
+            Packager.HelpPrinter.PrintHelp("manifest");
+            Packager.HelpPrinter.PrintHelp("extract-manifest");
+            Packager.HelpPrinter.PrintHelp("package");
+            Packager.HelpPrinter.PrintHelp("extract-package");
+            Packager.HelpPrinter.PrintHelp("verify");
+            Packager.HelpPrinter.PrintHelp("trust");
+            Packager.HelpPrinter.PrintHelp(Guid.NewGuid().ToString());
         }
 
         #endregion Public Methods
