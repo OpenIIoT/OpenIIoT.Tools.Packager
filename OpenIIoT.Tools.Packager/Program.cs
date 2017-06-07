@@ -45,6 +45,7 @@ using OpenIIoT.SDK.Packaging;
 using OpenIIoT.SDK.Packaging.Manifest;
 using OpenIIoT.SDK.Packaging.Operations;
 using Utility.CommandLine;
+using System.Linq;
 
 namespace OpenIIoT.Tools.Packager
 {
@@ -142,12 +143,21 @@ namespace OpenIIoT.Tools.Packager
         /// <param name="args">Command line arguments.</param>
         public static void Main(string[] args)
         {
+            Arguments.Populate();
+            Process();
+        }
+
+        public static void Process(string args = "")
+        {
+            if (args != string.Empty)
+            {
+                Arguments.Populate(args);
+            }
+
             string command = string.Empty;
 
             try
             {
-                Arguments.Populate();
-
                 if (Operands.Count > 1)
                 {
                     command = Operands[1].ToLower();
@@ -209,8 +219,6 @@ namespace OpenIIoT.Tools.Packager
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
-
-                Environment.Exit(1);
             }
         }
 

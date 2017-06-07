@@ -50,6 +50,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Xunit;
 
 namespace OpenIIoT.Tools.Packager.Tests
@@ -59,15 +60,87 @@ namespace OpenIIoT.Tools.Packager.Tests
     /// </summary>
     public class Program
     {
+        #region Public Constructors
+
+        public Program()
+        {
+            Uri codeBaseUri = new Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
+            string codeBasePath = Uri.UnescapeDataString(codeBaseUri.AbsolutePath);
+            string dirPath = Path.GetDirectoryName(codeBasePath);
+
+            DataDirectory = Path.Combine(dirPath, "Data");
+        }
+
+        #endregion Public Constructors
+
+        #region Private Properties
+
+        private string DataDirectory { get; set; }
+
+        #endregion Private Properties
+
         #region Public Methods
 
-        /// <summary>
-        ///     Tests the <see cref="Packager.Program.Main(string[])"/> method.
-        /// </summary>
         [Fact]
-        public void Main()
+        public void ProcessExtractManifest()
         {
-            Tools.Packager.Program.Main(new List<string>().ToArray());
+            string package = Path.Combine(DataDirectory, "package.zip");
+
+            Tools.Packager.Program.Process($"opkg.exe extract-manifest -p {package}");
+        }
+
+        [Fact]
+        public void ProcessExtractManifestFile()
+        {
+            string package = Path.Combine(DataDirectory, "package.zip");
+            string manifest = Path.Combine(DataDirectory, "extractedmanifest.json");
+
+            Tools.Packager.Program.Process($"opkg.exe extract-manifest -m {manifest} -p {package}");
+        }
+
+        [Fact]
+        public void ProcessHelp()
+        {
+            Tools.Packager.Program.Process("opkg.exe help");
+        }
+
+        [Fact]
+        public void ProcessManifest()
+        {
+            string directory = Path.Combine(DataDirectory, "Files");
+
+            Tools.Packager.Program.Process($"opkg.exe manifest -d {directory}");
+        }
+
+        [Fact]
+        public void ProcessManifestBad()
+        {
+            Tools.Packager.Program.Process($"opkg.exe manifest");
+        }
+
+        [Fact]
+        public void ProcessManifestFile()
+        {
+            string directory = Path.Combine(DataDirectory, "Files");
+            string manifest = Path.Combine(DataDirectory, "newmanifest.json");
+
+            Tools.Packager.Program.Process($"opkg.exe manifest -m {manifest} -d {directory}");
+        }
+
+        [Fact]
+        public void ProcessPackage()
+        {
+            string directory = Path.Combine(DataDirectory, "Files");
+            string manifest = Path.Combine(DataDirectory, "manifest.json");
+            string package = Path.Combine(DataDirectory, "createdpackage.zip");
+
+            Tools.Packager.Program.Process($"opkg.exe package -d {directory} -m {manifest} -p {package}");
+        }
+
+        [Fact]
+        public void ProcessPackageBad()
+        {
+            Tools.Packager.Program.Process($"opkg.exe package");
         }
 
         #endregion Public Methods
