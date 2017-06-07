@@ -69,6 +69,9 @@ namespace OpenIIoT.Tools.Packager.Tests
             string dirPath = Path.GetDirectoryName(codeBasePath);
 
             DataDirectory = Path.Combine(dirPath, "Data");
+
+            TempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(TempDirectory);
         }
 
         #endregion Public Constructors
@@ -77,9 +80,19 @@ namespace OpenIIoT.Tools.Packager.Tests
 
         private string DataDirectory { get; set; }
 
+        private string TempDirectory { get; set; }
+
         #endregion Private Properties
 
         #region Public Methods
+
+        /// <summary>
+        ///     Disposes this instance of <see cref="Packager"/>.
+        /// </summary>
+        public void Dispose()
+        {
+            Directory.Delete(TempDirectory, true);
+        }
 
         [Fact]
         public void ProcessExtractManifest()
@@ -93,9 +106,24 @@ namespace OpenIIoT.Tools.Packager.Tests
         public void ProcessExtractManifestFile()
         {
             string package = Path.Combine(DataDirectory, "package.zip");
-            string manifest = Path.Combine(DataDirectory, "extractedmanifest.json");
+            string manifest = Path.Combine(TempDirectory, "extractedmanifest.json");
 
             Tools.Packager.Program.Process($"opkg.exe extract-manifest -m {manifest} -p {package}");
+        }
+
+        [Fact]
+        public void ProcessExtractPackage()
+        {
+            string package = Path.Combine(DataDirectory, "package.zip");
+            string directory = Path.Combine(TempDirectory, "payload");
+
+            Tools.Packager.Program.Process($"opkg.exe extract-package -p {package} -d {directory}");
+        }
+
+        [Fact]
+        public void ProcessExtractPackageBad()
+        {
+            Tools.Packager.Program.Process($"opkg.exe extract-package");
         }
 
         [Fact]
@@ -122,7 +150,7 @@ namespace OpenIIoT.Tools.Packager.Tests
         public void ProcessManifestFile()
         {
             string directory = Path.Combine(DataDirectory, "Files");
-            string manifest = Path.Combine(DataDirectory, "newmanifest.json");
+            string manifest = Path.Combine(TempDirectory, "newmanifest.json");
 
             Tools.Packager.Program.Process($"opkg.exe manifest -m {manifest} -d {directory}");
         }
@@ -132,7 +160,7 @@ namespace OpenIIoT.Tools.Packager.Tests
         {
             string directory = Path.Combine(DataDirectory, "Files");
             string manifest = Path.Combine(DataDirectory, "manifest.json");
-            string package = Path.Combine(DataDirectory, "createdpackage.zip");
+            string package = Path.Combine(TempDirectory, "createdpackage.zip");
 
             Tools.Packager.Program.Process($"opkg.exe package -d {directory} -m {manifest} -p {package}");
         }
@@ -141,6 +169,38 @@ namespace OpenIIoT.Tools.Packager.Tests
         public void ProcessPackageBad()
         {
             Tools.Packager.Program.Process($"opkg.exe package");
+        }
+
+        [Fact]
+        public void ProcessTrust()
+        {
+            string package = Path.Combine(TempDirectory, "signedpackage.zip");
+            File.Copy(Path.Combine(DataDirectory, "signedpackage.zip"), package);
+
+            string key = Path.Combine(DataDirectory, "private.asc");
+            string passphrase = File.ReadAllText(Path.Combine(DataDirectory, "passphrase.txt"));
+
+            Tools.Packager.Program.Process($"opkg.exe trust -p {package} -r {key} -a {passphrase}");
+        }
+
+        [Fact]
+        public void ProcessTrustBad()
+        {
+            Tools.Packager.Program.Process($"opkg.exe trust");
+        }
+
+        [Fact]
+        public void ProcessVerify()
+        {
+            string package = Path.Combine(DataDirectory, "package.zip");
+
+            Tools.Packager.Program.Process($"opkg.exe verify -p {package}");
+        }
+
+        [Fact]
+        public void ProcessVerifyBad()
+        {
+            Tools.Packager.Program.Process($"opkg.exe verify");
         }
 
         #endregion Public Methods
