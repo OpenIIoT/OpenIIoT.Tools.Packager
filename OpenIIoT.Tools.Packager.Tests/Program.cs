@@ -210,6 +210,15 @@ namespace OpenIIoT.Tools.Packager.Tests
         }
 
         /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with one argument.
+        /// </summary>
+        [Fact]
+        public void ProcessOneArgument()
+        {
+            Tools.Packager.Program.Process("okpg.exe");
+        }
+
+        /// <summary>
         ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the package command and directory,
         ///     manifest and package arguments.
         /// </summary>
