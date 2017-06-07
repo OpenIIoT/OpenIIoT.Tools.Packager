@@ -148,9 +148,11 @@ namespace OpenIIoT.Tools.Packager
         }
 
         /// <summary>
-        ///     Processes the command line arguments and carries out the specified command.
+        ///     Processes the desired command with the arguments specified in the command line arguments from Main().
         /// </summary>
-        /// <param name="args">The optional command line arguments.</param>
+        /// <param name="args">
+        ///     The optional command line arguments, used to override the arguments with which the application was started.
+        /// </param>
         public static void Process(string args = "")
         {
             if (args != string.Empty)
