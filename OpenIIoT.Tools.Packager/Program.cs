@@ -41,6 +41,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using OpenIIoT.SDK.Packaging;
 using OpenIIoT.SDK.Packaging.Manifest;
 using OpenIIoT.SDK.Packaging.Operations;
@@ -51,7 +52,7 @@ namespace OpenIIoT.Tools.Packager
     /// <summary>
     ///     The main Application class.
     /// </summary>
-    internal class Program
+    public class Program
     {
         #region Private Properties
 
@@ -142,12 +143,27 @@ namespace OpenIIoT.Tools.Packager
         /// <param name="args">Command line arguments.</param>
         public static void Main(string[] args)
         {
+            Arguments.Populate();
+            Process();
+        }
+
+        /// <summary>
+        ///     Processes the desired command with the arguments specified in the command line arguments from Main().
+        /// </summary>
+        /// <param name="args">
+        ///     The optional command line arguments, used to override the arguments with which the application was started.
+        /// </param>
+        public static void Process(string args = "")
+        {
+            if (args != string.Empty)
+            {
+                Arguments.Populate(args);
+            }
+
             string command = string.Empty;
 
             try
             {
-                Arguments.Populate();
-
                 if (Operands.Count > 1)
                 {
                     command = Operands[1].ToLower();
@@ -209,8 +225,6 @@ namespace OpenIIoT.Tools.Packager
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
-
-                Environment.Exit(1);
             }
         }
 
