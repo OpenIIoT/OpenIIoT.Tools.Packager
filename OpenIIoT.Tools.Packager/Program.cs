@@ -51,7 +51,7 @@ namespace OpenIIoT.Tools.Packager
     /// <summary>
     ///     The main Application class.
     /// </summary>
-    internal class Program
+    public class Program
     {
         #region Private Properties
 
