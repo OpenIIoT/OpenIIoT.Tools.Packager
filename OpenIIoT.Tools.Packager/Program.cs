@@ -41,11 +41,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using OpenIIoT.SDK.Packaging;
 using OpenIIoT.SDK.Packaging.Manifest;
 using OpenIIoT.SDK.Packaging.Operations;
 using Utility.CommandLine;
-using System.Linq;
 
 namespace OpenIIoT.Tools.Packager
 {
@@ -147,6 +147,10 @@ namespace OpenIIoT.Tools.Packager
             Process();
         }
 
+        /// <summary>
+        ///     Processes the command line arguments and carries out the specified command.
+        /// </summary>
+        /// <param name="args">The optional command line arguments.</param>
         public static void Process(string args = "")
         {
             if (args != string.Empty)
