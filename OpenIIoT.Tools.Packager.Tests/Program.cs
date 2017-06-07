@@ -62,6 +62,9 @@ namespace OpenIIoT.Tools.Packager.Tests
     {
         #region Public Constructors
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Program"/> class.
+        /// </summary>
         public Program()
         {
             Uri codeBaseUri = new Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
@@ -78,8 +81,14 @@ namespace OpenIIoT.Tools.Packager.Tests
 
         #region Private Properties
 
+        /// <summary>
+        ///     Gets or sets the directory containing test data
+        /// </summary>
         private string DataDirectory { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the temporary directory for tests data
+        /// </summary>
         private string TempDirectory { get; set; }
 
         #endregion Private Properties
@@ -94,6 +103,9 @@ namespace OpenIIoT.Tools.Packager.Tests
             Directory.Delete(TempDirectory, true);
         }
 
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the extract-manifest command.
+        /// </summary>
         [Fact]
         public void ProcessExtractManifest()
         {
@@ -102,6 +114,10 @@ namespace OpenIIoT.Tools.Packager.Tests
             Tools.Packager.Program.Process($"opkg.exe extract-manifest -p {package}");
         }
 
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the extract-manifest command with an
+        ///     output file.
+        /// </summary>
         [Fact]
         public void ProcessExtractManifestFile()
         {
@@ -111,6 +127,10 @@ namespace OpenIIoT.Tools.Packager.Tests
             Tools.Packager.Program.Process($"opkg.exe extract-manifest -m {manifest} -p {package}");
         }
 
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the extract-package command and package
+        ///     and directory arguments.
+        /// </summary>
         [Fact]
         public void ProcessExtractPackage()
         {
@@ -120,18 +140,27 @@ namespace OpenIIoT.Tools.Packager.Tests
             Tools.Packager.Program.Process($"opkg.exe extract-package -p {package} -d {directory}");
         }
 
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the extract-package command.
+        /// </summary>
         [Fact]
         public void ProcessExtractPackageBad()
         {
             Tools.Packager.Program.Process($"opkg.exe extract-package");
         }
 
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the help command.
+        /// </summary>
         [Fact]
         public void ProcessHelp()
         {
             Tools.Packager.Program.Process("opkg.exe help");
         }
 
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the manifest command and directory argument.
+        /// </summary>
         [Fact]
         public void ProcessManifest()
         {
@@ -140,12 +169,19 @@ namespace OpenIIoT.Tools.Packager.Tests
             Tools.Packager.Program.Process($"opkg.exe manifest -d {directory}");
         }
 
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the manifest command.
+        /// </summary>
         [Fact]
         public void ProcessManifestBad()
         {
             Tools.Packager.Program.Process($"opkg.exe manifest");
         }
 
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the manifest command and manifest and
+        ///     directory arguments.
+        /// </summary>
         [Fact]
         public void ProcessManifestFile()
         {
@@ -155,6 +191,10 @@ namespace OpenIIoT.Tools.Packager.Tests
             Tools.Packager.Program.Process($"opkg.exe manifest -m {manifest} -d {directory}");
         }
 
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the package command and directory,
+        ///     manifest and package arguments.
+        /// </summary>
         [Fact]
         public void ProcessPackage()
         {
@@ -165,12 +205,19 @@ namespace OpenIIoT.Tools.Packager.Tests
             Tools.Packager.Program.Process($"opkg.exe package -d {directory} -m {manifest} -p {package}");
         }
 
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the package command.
+        /// </summary>
         [Fact]
         public void ProcessPackageBad()
         {
             Tools.Packager.Program.Process($"opkg.exe package");
         }
 
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the trust command and package, key and
+        ///     passphrase arguments.
+        /// </summary>
         [Fact]
         public void ProcessTrust()
         {
@@ -183,12 +230,18 @@ namespace OpenIIoT.Tools.Packager.Tests
             Tools.Packager.Program.Process($"opkg.exe trust -p {package} -r {key} -a {passphrase}");
         }
 
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the trust command.
+        /// </summary>
         [Fact]
         public void ProcessTrustBad()
         {
             Tools.Packager.Program.Process($"opkg.exe trust");
         }
 
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the verify command and package argument.
+        /// </summary>
         [Fact]
         public void ProcessVerify()
         {
@@ -197,6 +250,9 @@ namespace OpenIIoT.Tools.Packager.Tests
             Tools.Packager.Program.Process($"opkg.exe verify -p {package}");
         }
 
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the verify command.
+        /// </summary>
         [Fact]
         public void ProcessVerifyBad()
         {
