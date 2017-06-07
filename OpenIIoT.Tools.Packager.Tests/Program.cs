@@ -104,6 +104,15 @@ namespace OpenIIoT.Tools.Packager.Tests
         }
 
         /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with no arguments.
+        /// </summary>
+        [Fact]
+        public void Process()
+        {
+            Tools.Packager.Program.Process();
+        }
+
+        /// <summary>
         ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the extract-manifest command.
         /// </summary>
         [Fact]
@@ -146,7 +155,7 @@ namespace OpenIIoT.Tools.Packager.Tests
         [Fact]
         public void ProcessExtractPackageBad()
         {
-            Tools.Packager.Program.Process($"opkg.exe extract-package");
+            Tools.Packager.Program.Process("opkg.exe extract-package");
         }
 
         /// <summary>
@@ -156,6 +165,15 @@ namespace OpenIIoT.Tools.Packager.Tests
         public void ProcessHelp()
         {
             Tools.Packager.Program.Process("opkg.exe help");
+        }
+
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the help command and a topic.
+        /// </summary>
+        [Fact]
+        public void ProcessHelpTopic()
+        {
+            Tools.Packager.Program.Process("opkg.exe help manifest");
         }
 
         /// <summary>
@@ -175,7 +193,7 @@ namespace OpenIIoT.Tools.Packager.Tests
         [Fact]
         public void ProcessManifestBad()
         {
-            Tools.Packager.Program.Process($"opkg.exe manifest");
+            Tools.Packager.Program.Process("opkg.exe manifest");
         }
 
         /// <summary>
@@ -189,6 +207,15 @@ namespace OpenIIoT.Tools.Packager.Tests
             string manifest = Path.Combine(TempDirectory, "newmanifest.json");
 
             Tools.Packager.Program.Process($"opkg.exe manifest -m {manifest} -d {directory}");
+        }
+
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with one argument.
+        /// </summary>
+        [Fact]
+        public void ProcessOneArgument()
+        {
+            Tools.Packager.Program.Process("okpg.exe");
         }
 
         /// <summary>
@@ -211,7 +238,7 @@ namespace OpenIIoT.Tools.Packager.Tests
         [Fact]
         public void ProcessPackageBad()
         {
-            Tools.Packager.Program.Process($"opkg.exe package");
+            Tools.Packager.Program.Process("opkg.exe package");
         }
 
         /// <summary>
@@ -236,7 +263,7 @@ namespace OpenIIoT.Tools.Packager.Tests
         [Fact]
         public void ProcessTrustBad()
         {
-            Tools.Packager.Program.Process($"opkg.exe trust");
+            Tools.Packager.Program.Process("opkg.exe trust");
         }
 
         /// <summary>
@@ -256,7 +283,7 @@ namespace OpenIIoT.Tools.Packager.Tests
         [Fact]
         public void ProcessVerifyBad()
         {
-            Tools.Packager.Program.Process($"opkg.exe verify");
+            Tools.Packager.Program.Process("opkg.exe verify");
         }
 
         #endregion Public Methods
