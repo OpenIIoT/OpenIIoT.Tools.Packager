@@ -109,7 +109,7 @@ namespace OpenIIoT.Tools.Packager.Tests
         [Fact]
         public void Process()
         {
-            Tools.Packager.Program.Process("opkg.exe");
+            Tools.Packager.Program.Process();
         }
 
         /// <summary>
