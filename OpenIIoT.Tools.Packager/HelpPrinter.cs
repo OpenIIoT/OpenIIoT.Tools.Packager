@@ -262,12 +262,12 @@ namespace OpenIIoT.Tools.Packager
             prefixed("> trust");
             lineBreak();
 
-            prefixed("<-p|--package>\t\tThe package to trust.");
+            prefixed("<-p|--package>\tThe package to trust.");
             prefixed("<-r|--private-key>\tThe ASCII-armored PGP private key file.");
             prefixed("<-a|--password>\tThe password for the private key file.");
 
             lineBreak();
-            prefixed("! ex: 'verify -p \"coolPlugin.opkg\" -r \"privateKey.asc\" -a MyPassword'");
+            prefixed("! ex: 'trust -p \"coolPlugin.opkg\" -r \"privateKey.asc\" -a MyPassword'");
             PrintFooter();
         }
 
@@ -282,10 +282,10 @@ namespace OpenIIoT.Tools.Packager
             prefixed("> verify");
             lineBreak();
 
-            prefixed("<package>\t\tThe package to verify.");
+            prefixed("<-p|--package>\tThe package to verify.");
 
             lineBreak();
-            prefixed("! ex: 'verify \"coolPlugin.opkg\"'");
+            prefixed("! ex: 'verify -p \"coolPlugin.opkg\"'");
             PrintFooter();
         }
 
