@@ -159,6 +159,12 @@ private and public key pair must host the public key matching the specified priv
 
 ## Package Extraction
 
+Extract Packages with the ```extract-package``` command.  
+
+If the output directory exists an error will be thrown, otherwise it can be overwritten with the ```-o``` or ```--overwrite``` arguments.
+
+Packages are automatically verified prior to extraction.  To suppress verification, specify either the ```-v``` or ```--skip-verification``` argument.
+
 ```
   ▄████   ██   ██    ██      █████ ▄█████  ▄█████     ██          █████▄ ▄█████  ▄█████   ██ ▄█▀  ▄█████    ▄████▄  ▄████
   ██       ██▄██▀ ▀██████▄  ██  ██ ██   ██ ██   ▀  ▀██████▄  ▄▄  ██   ██ ██   ██ ██   ▀   ██▐█▀   ██   ██  ██    ▀  ██
@@ -178,6 +184,12 @@ private and public key pair must host the public key matching the specified priv
 
 ## Trust Creation
 
+A Trust creates a digital signature of a Package's signature digest.  This command is designed to be used by a member of 
+the OpenIIoT team to verify that a Package has been reviewed.
+
+The ```trust``` command accepts three required arguments; the Package to trust, the PGP private key file, and the password
+for the private key.
+
 ```
     ██      █████ █   █   ▄█████    ██
  ▀██████▄  ██  ██ █   ██  ██  ▀  ▀██████▄
@@ -186,17 +198,17 @@ private and public key pair must host the public key matching the specified priv
    ┌─────────────────────── ─ ─── ───────────────────── ── ───── ─ ───   ──
    │ > trust
    │
-   │ <-p|--package>             The package to trust.
+   │ <-p|--package>     The package to trust.
    │ <-r|--private-key> The ASCII-armored PGP private key file.
    │ <-a|--password>    The password for the private key file.
    │
-   │ ! ex: 'verify -p "coolPlugin.opkg" -r "privateKey.asc" -a MyPassword'
+   │ ! ex: 'trust -p "coolPlugin.opkg" -r "privateKey.asc" -a MyPassword'
    └───────────────────── ── ─────────────── ─── ─ ─  ─   ─
 ```
 
 ## Package Verification
 
-Verify Package files with the Verify command.  Verification results are printed to the console.
+Verify Package files with the ```verify``` command.  Verification results are printed to the console.
 
 ```
   █   █   ▄████    █████  █    ▄████ ▄█  ▄
@@ -206,8 +218,8 @@ Verify Package files with the Verify command.  Verification results are printed 
    ┌─────────────────────── ─ ─── ───────────────────── ── ───── ─ ───   ──
    │ > verify
    │
-   │ <-p|--package>          The package to verify.
+   │ <-p|--package>     The package to verify.
    │
-   │ ! ex: 'verify "coolPlugin.opkg"'
+   │ ! ex: 'verify -p "coolPlugin.opkg"'
    └───────────────────── ── ─────────────── ─── ─ ─  ─   ─
 ```
