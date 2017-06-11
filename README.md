@@ -5,7 +5,11 @@
 [![codecov](https://codecov.io/gh/OpenIIoT/OpenIIoT.Tools.Packager/branch/master/graph/badge.svg)](https://codecov.io/gh/OpenIIoT/OpenIIoT.Tools.Packager)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://github.com/OpenIIoT/OpenIIoT.Tools.Packager/blob/master/LICENSE)
 
-Allows creation and management of Package files for the OpenIIoT platform.
+Creates and manages Package files for the OpenIIoT platform.
+
+## Commands 
+
+View a list of available commands by executing the application with no parameters, or with ```help```.
 
 ```
  ▄█████   █████    ▄▄███▄▄    ▄▄███▄▄  ▄█████  ██▄▄▄  █████▄   ▄█████
@@ -23,6 +27,8 @@ Allows creation and management of Package files for the OpenIIoT platform.
    │ ! use 'help <command>' to get more details about that command.
    └───────────────────── ── ─────────────── ─── ─ ─  ─   ─
 ```
+
+Information about a specific command can be retrieved using ```help <command>```.
 
 ## Manifest Generation
 
@@ -106,9 +112,7 @@ The generated Manifest will be output to the console if no Manifest file is spec
 
 ## Manifest Extraction
 
-A Package's Manifest can be extracted without fully extracting the Package with the ```extract-manifest``` command.  This
-command requires a Package as input and will either output the Manifest to the console or to a file if the ```-m``` or 
-```--manifest``` arugments are specified.
+A Package's Manifest can be extracted without fully extracting the Package with the ```extract-manifest``` command.  
 
 ```
   ▄████   ██   ██    ██      █████ ▄█████  ▄█████     ██          ▄▄███▄▄  ▄█████  ██▄▄▄   █    ▄████  ▄████   ▄█████    ██
@@ -124,6 +128,9 @@ command requires a Package as input and will either output the Manifest to the c
    │ ! ex: 'extract-manifest -p "desktop\coolPlugin.opkg" -o "extractedManifest.json"'
    └───────────────────── ── ─────────────── ─── ─ ─  ─   ─
 ```
+
+This command will either output the Manifest to the console or to a file if the ```-m``` or 
+```--manifest``` arugments are specified.
 
 ## Package Creation
 
@@ -159,6 +166,8 @@ private and public key pair must host the public key matching the specified priv
 
 ## Package Extraction
 
+Extract Packages with the ```extract-package``` command.  
+
 ```
   ▄████   ██   ██    ██      █████ ▄█████  ▄█████     ██          █████▄ ▄█████  ▄█████   ██ ▄█▀  ▄█████    ▄████▄  ▄████
   ██       ██▄██▀ ▀██████▄  ██  ██ ██   ██ ██   ▀  ▀██████▄  ▄▄  ██   ██ ██   ██ ██   ▀   ██▐█▀   ██   ██  ██    ▀  ██
@@ -176,7 +185,14 @@ private and public key pair must host the public key matching the specified priv
    └───────────────────── ── ─────────────── ─── ─ ─  ─   ─
 ```
 
+If the output directory exists an error will be thrown, otherwise it can be overwritten with the ```-o``` or ```--overwrite``` arguments.
+
+Packages are automatically verified prior to extraction.  To suppress verification, specify either the ```-v``` or ```--skip-verification``` argument.
+
 ## Trust Creation
+
+A Trust creates a digital signature of a Package's signature digest.  This command is designed to be used by a member of 
+the OpenIIoT team to verify that a Package has been reviewed.
 
 ```
     ██      █████ █   █   ▄█████    ██
@@ -186,17 +202,20 @@ private and public key pair must host the public key matching the specified priv
    ┌─────────────────────── ─ ─── ───────────────────── ── ───── ─ ───   ──
    │ > trust
    │
-   │ <-p|--package>             The package to trust.
+   │ <-p|--package>     The package to trust.
    │ <-r|--private-key> The ASCII-armored PGP private key file.
    │ <-a|--password>    The password for the private key file.
    │
-   │ ! ex: 'verify -p "coolPlugin.opkg" -r "privateKey.asc" -a MyPassword'
+   │ ! ex: 'trust -p "coolPlugin.opkg" -r "privateKey.asc" -a MyPassword'
    └───────────────────── ── ─────────────── ─── ─ ─  ─   ─
 ```
 
+The ```trust``` command accepts three required arguments; the Package to trust, the PGP private key file, and the password
+for the private key.  Other keys may be used, however OpenIIoT will use the OpenIIoT public key to verify the package.
+
 ## Package Verification
 
-Verify Package files with the Verify command.  Verification results are printed to the console.
+Verify Package files with the ```verify``` command.
 
 ```
   █   █   ▄████    █████  █    ▄████ ▄█  ▄
@@ -206,8 +225,17 @@ Verify Package files with the Verify command.  Verification results are printed 
    ┌─────────────────────── ─ ─── ───────────────────── ── ───── ─ ───   ──
    │ > verify
    │
-   │ <-p|--package>          The package to verify.
+   │ <-p|--package>     The package to verify.
    │
-   │ ! ex: 'verify "coolPlugin.opkg"'
+   │ ! ex: 'verify -p "coolPlugin.opkg"'
    └───────────────────── ── ─────────────── ─── ─ ─  ─   ─
 ```
+
+This command verifies the Package in the following order:
+
+* If the Package is trusted, the trust is validated.
+* If the Package is signed, the signature is validated.
+* The payload checksum is validated against the payload archive.
+* The payload is extracted and each file is validated against the Manifest.
+
+Verification results are printed to the console.
