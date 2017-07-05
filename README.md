@@ -65,23 +65,17 @@ the Manifest should look something like the following:
   "Copyright": "Copyright (c) 2017 OpenIIoT",
   "License": "AGPLv3",
   "Url": "http://github.com/openiiot",
-  "Files": {
-    "Binary": [
-      {
+  "Files": [
+    {
         "Source": "binary.dll"
-      }
-    ],
-    "WebIndex": [
-      {
+    },
+    {
         "Source": "index.html"
-      }
-    ],
-    "Resource": [
-      {
+    },
+    {
         "Source": "resource.bmp"
-      }
-    ]
-  }
+    }
+  ]
 }
 ```
 
