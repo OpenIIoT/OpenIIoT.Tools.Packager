@@ -201,12 +201,11 @@ namespace OpenIIoT.Tools.Packager
             lineBreak();
 
             prefixed("<-d|--directory <directory>>\tThe directory containing payload files.");
-            prefixed("[-i|--include-resources]\t\tInclude non-binary/web files.");
             prefixed("[-h|--hash]\t\t\tMark files to be hashed during packaging.");
             prefixed("[-m|--manifest <file>]\t\tThe output manifest file.");
 
             lineBreak();
-            prefixed("! ex: 'manifest -hi -d \"desktop\\coolPlugin\" -o \"manifest.json\"'");
+            prefixed("! ex: 'manifest -h -d \"desktop\\coolPlugin\" -o \"manifest.json\"'");
             PrintFooter();
         }
 

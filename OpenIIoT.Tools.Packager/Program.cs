@@ -41,7 +41,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using OpenIIoT.SDK.Packaging;
 using OpenIIoT.SDK.Packaging.Manifest;
 using OpenIIoT.SDK.Packaging.Operations;
@@ -67,12 +66,6 @@ namespace OpenIIoT.Tools.Packager
         /// </summary>
         [Argument('h', "hash-files")]
         private static bool HashFiles { get; set; }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether resource files are included when generating a manifest.
-        /// </summary>
-        [Argument('i', "include-resources")]
-        private static bool IncludeResources { get; set; }
 
         /// <summary>
         ///     Gets or sets the Keybase.io username of the account hosting the PGP public key used for digest verification.
@@ -174,7 +167,7 @@ namespace OpenIIoT.Tools.Packager
                     ManifestGenerator generator = new ManifestGenerator();
                     generator.Updated += Update;
 
-                    PackageManifest manifest = generator.GenerateManifest(Directory, IncludeResources, HashFiles, ManifestFile);
+                    PackageManifest manifest = generator.GenerateManifest(Directory, HashFiles, ManifestFile);
 
                     if (string.IsNullOrEmpty(ManifestFile) && manifest != default(PackageManifest))
                     {
