@@ -42,8 +42,8 @@
     <DocumentationFile>bin\Release\OpenIIoT.Tools.Packager.Tests.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenIIoT.SDK.Packaging, Version=0.9.0.23796, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenIIoT.SDK.Packaging.0.9.0.23796-beta\lib\OpenIIoT.SDK.Packaging.dll</HintPath>
+    <Reference Include="OpenIIoT.SDK.Packaging, Version=0.9.1.26849, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenIIoT.SDK.Packaging.0.9.1.26849-beta\lib\OpenIIoT.SDK.Packaging.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
