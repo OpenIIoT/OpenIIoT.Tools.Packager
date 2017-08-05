@@ -148,7 +148,7 @@ namespace OpenIIoT.Tools.Packager
             prefixed("[-m|--manifest <file>]\tThe output manifest file.");
 
             lineBreak();
-            prefixed("! ex: 'extract-manifest -p \"desktop\\coolPlugin.opkg\" -o \"extractedManifest.json\"'");
+            prefixed("! ex: 'extract-manifest -p \"desktop\\plugin.opkg\" -o \"extractedManifest.json\"'");
             PrintFooter();
         }
 
@@ -165,11 +165,12 @@ namespace OpenIIoT.Tools.Packager
 
             prefixed("<-p|--package <file>>\t\tThe input package file.");
             prefixed("<-d|--directory <directory>]\tThe output directory.");
+            prefixed("[-b|--public-key <key file>]\tThe ASCII-armored PGP public key file. If omitted, the key is retrieved from keybase.");
             prefixed("[-o|--overwrite]\t\t\tDeletes the output directory prior to extraction, if it exists.");
             prefixed("[-v|--skip-verification]\t\tSkips the verification step prior to extraction.");
 
             lineBreak();
-            prefixed("! ex: 'extract-package -ov -p \"desktop\\coolPlugin.opkg\" -d \"desktop\\extracted\"");
+            prefixed("! ex: 'extract-package -ov -p \"desktop\\plugin.opkg\" -d \"desktop\\extracted\" -b \"key.asc\"'");
             PrintFooter();
         }
 
@@ -205,7 +206,7 @@ namespace OpenIIoT.Tools.Packager
             prefixed("[-m|--manifest <file>]\t\tThe output manifest file.");
 
             lineBreak();
-            prefixed("! ex: 'manifest -h -d \"desktop\\coolPlugin\" -o \"manifest.json\"'");
+            prefixed("! ex: 'manifest -h -d \"desktop\\plugin\" -o \"manifest.json\"'");
             PrintFooter();
         }
 
@@ -229,8 +230,8 @@ namespace OpenIIoT.Tools.Packager
             prefixed("[-u|--keybase-username <name>]\tThe username of the keybase.io account containing the PGP keys used to create the digest.");
 
             lineBreak();
-            prefixed("! ex: 'package -d \"desktop\\coolPlugin\" -m \"manifest.json\" -p \"coolPlugin.opkg\"'");
-            prefixed("! ex: 'package -d \"desktop\\coolPlugin\" -m \"manifest.json\" -p \"coolPlugin.opkg\" -s -r \"privateKey.asc\" -a MyPassword -u \"someUser123'");
+            prefixed("! ex: 'package -d \"desktop\\plugin\" -m \"manifest.json\" -p \"plugin.opkg\"'");
+            prefixed("! ex: 'package -d \"desktop\\plugin\" -m \"manifest.json\" -p \"plugin.opkg\" -s -r \"privateKey.asc\" -a MyPassword -u \"someUser123'");
             PrintFooter();
         }
 
@@ -266,7 +267,7 @@ namespace OpenIIoT.Tools.Packager
             prefixed("<-a|--password>\tThe password for the private key file.");
 
             lineBreak();
-            prefixed("! ex: 'trust -p \"coolPlugin.opkg\" -r \"privateKey.asc\" -a MyPassword'");
+            prefixed("! ex: 'trust -p \"plugin.opkg\" -r \"privateKey.asc\" -a MyPassword'");
             PrintFooter();
         }
 
@@ -281,10 +282,11 @@ namespace OpenIIoT.Tools.Packager
             prefixed("> verify");
             lineBreak();
 
-            prefixed("<-p|--package>\tThe package to verify.");
+            prefixed("<-p|--package>\t\t\tThe package to verify.");
+            prefixed("[-b|--public-key <key file>]\tThe ASCII-armored PGP public key file. If omitted, the key is retrieved from keybase.");
 
             lineBreak();
-            prefixed("! ex: 'verify -p \"coolPlugin.opkg\"'");
+            prefixed("! ex: 'verify -p \"plugin.opkg\" -b \"key.asc\"'");
             PrintFooter();
         }
 

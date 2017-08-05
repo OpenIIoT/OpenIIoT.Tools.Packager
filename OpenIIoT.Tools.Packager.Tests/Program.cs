@@ -159,6 +159,20 @@ namespace OpenIIoT.Tools.Packager.Tests
         }
 
         /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the extract-package command and package,
+        ///     directory, and public key arguments.
+        /// </summary>
+        [Fact]
+        public void ProcessExtractPackageKey()
+        {
+            string package = Path.Combine(DataDirectory, "package.zip");
+            string directory = Path.Combine(TempDirectory, "payload");
+            string keyFile = Path.Combine(DataDirectory, "public.asc");
+
+            Tools.Packager.Program.Process($"opkg.exe extract-package -p {package} -d {directory} -b {keyFile}");
+        }
+
+        /// <summary>
         ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the help command.
         /// </summary>
         [Fact]
@@ -242,6 +256,23 @@ namespace OpenIIoT.Tools.Packager.Tests
         }
 
         /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the package command and directory,
+        ///     manifest, package, and the necessary arguments to create a signed package.
+        /// </summary>
+        [Fact]
+        public void ProcessPackageSigned()
+        {
+            string directory = Path.Combine(DataDirectory, "Files");
+            string manifest = Path.Combine(DataDirectory, "manifest.json");
+            string package = Path.Combine(TempDirectory, "createdpackage.zip");
+            string keyFile = Path.Combine(DataDirectory, "private.asc");
+            string passphrase = File.ReadAllText(Path.Combine(DataDirectory, "passphrase.txt"));
+            string username = "openiiottest";
+
+            Tools.Packager.Program.Process($"opkg.exe package -d {directory} -m {manifest} -p {package} -s -r {keyFile} -a {passphrase} -u {username}");
+        }
+
+        /// <summary>
         ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the trust command and package, key and
         ///     passphrase arguments.
         /// </summary>
@@ -284,6 +315,19 @@ namespace OpenIIoT.Tools.Packager.Tests
         public void ProcessVerifyBad()
         {
             Tools.Packager.Program.Process("opkg.exe verify");
+        }
+
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the verify command and package and
+        ///     public key arguments.
+        /// </summary>
+        [Fact]
+        public void ProcessVerifyExplicitKey()
+        {
+            string package = Path.Combine(DataDirectory, "package.zip");
+            string keyFile = Path.Combine(DataDirectory, "public.asc");
+
+            Tools.Packager.Program.Process($"opkg.exe verify -p {package} -b {keyFile}");
         }
 
         #endregion Public Methods
