@@ -286,6 +286,19 @@ namespace OpenIIoT.Tools.Packager.Tests
             Tools.Packager.Program.Process("opkg.exe verify");
         }
 
+        /// <summary>
+        ///     Tests the <see cref="Tools.Packager.Program.Process(string)"/> method with the verify command and package and
+        ///     public key arguments.
+        /// </summary>
+        [Fact]
+        public void ProcessVerifyExplicitKey()
+        {
+            string package = Path.Combine(DataDirectory, "package.zip");
+            string keyFile = Path.Combine(DataDirectory, "public.asc");
+
+            Tools.Packager.Program.Process($"opkg.exe verify -p {package} -b {keyFile}");
+        }
+
         #endregion Public Methods
     }
 }

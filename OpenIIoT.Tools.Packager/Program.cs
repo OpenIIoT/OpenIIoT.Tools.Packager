@@ -41,6 +41,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using OpenIIoT.SDK.Packaging;
 using OpenIIoT.SDK.Packaging.Manifest;
 using OpenIIoT.SDK.Packaging.Operations;
@@ -108,6 +109,12 @@ namespace OpenIIoT.Tools.Packager
         /// </summary>
         [Argument('r', "private-key")]
         private static string PrivateKeyFile { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the filename of the file containing the ASCII-armored PGP public key.
+        /// </summary>
+        [Argument('b', "public-key")]
+        private static string PublicKeyFile { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether the package file should be signed during a package operation.
@@ -190,25 +197,49 @@ namespace OpenIIoT.Tools.Packager
                 {
                     PackageCreator creator = new PackageCreator();
                     creator.Updated += Update;
-                    creator.CreatePackage(Directory, ManifestFile, PackageFile, SignPackage, PrivateKeyFile, Passphrase, KeybaseUsername);
+
+                    string privateKey = string.Empty;
+
+                    if (!string.IsNullOrEmpty(PrivateKeyFile))
+                    {
+                        privateKey = File.ReadAllText(PrivateKeyFile);
+                    }
+
+                    creator.CreatePackage(Directory, ManifestFile, PackageFile, SignPackage, privateKey, Passphrase, KeybaseUsername);
                 }
                 else if (command == "extract-package")
                 {
                     PackageExtractor extractor = new PackageExtractor();
                     extractor.Updated += Update;
-                    extractor.ExtractPackage(PackageFile, Directory, Overwrite, SkipVerification);
+
+                    string publicKey = string.Empty;
+
+                    if (!string.IsNullOrEmpty(PublicKeyFile))
+                    {
+                        publicKey = File.ReadAllText(PublicKeyFile);
+                    }
+
+                    extractor.ExtractPackage(PackageFile, Directory, publicKey, Overwrite, SkipVerification);
                 }
                 else if (command == "trust")
                 {
                     PackageTruster truster = new PackageTruster();
                     truster.Updated += Update;
-                    truster.TrustPackage(PackageFile, PrivateKeyFile, Passphrase);
+                    truster.TrustPackage(PackageFile, File.ReadAllText(PrivateKeyFile), Passphrase);
                 }
                 else if (command == "verify")
                 {
                     PackageVerifier verifier = new PackageVerifier();
                     verifier.Updated += Update;
-                    verifier.VerifyPackage(PackageFile);
+
+                    string publicKey = string.Empty;
+
+                    if (!string.IsNullOrEmpty(PublicKeyFile))
+                    {
+                        publicKey = File.ReadAllText(PublicKeyFile);
+                    }
+
+                    verifier.VerifyPackage(PackageFile, publicKey);
                 }
                 else
                 {
