@@ -48,11 +48,11 @@
                                                                                                  ▀████▀
                                                                                                    ▀▀                            */
 
-using System;
-using Xunit;
-
 namespace OpenIIoT.Tools.Packager.Tests
 {
+    using System;
+    using Xunit;
+
     /// <summary>
     ///     Unit tests for the HelpPrinter class.
     /// </summary>

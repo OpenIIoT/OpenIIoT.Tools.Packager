@@ -48,13 +48,12 @@
                                                                                                  ▀████▀
                                                                                                    ▀▀                            */
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using Xunit;
-
 namespace OpenIIoT.Tools.Packager.Tests
 {
+    using System;
+    using System.IO;
+    using Xunit;
+
     /// <summary>
     ///     Unit tests for the HelpPrinter class.
     /// </summary>

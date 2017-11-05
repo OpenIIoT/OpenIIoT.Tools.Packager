@@ -39,16 +39,17 @@
                                                                                                  ▀████▀
                                                                                                    ▀▀                            */
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using OpenIIoT.SDK.Packaging;
-using OpenIIoT.SDK.Packaging.Manifest;
-using OpenIIoT.SDK.Packaging.Operations;
-using Utility.CommandLine;
-
 namespace OpenIIoT.Tools.Packager
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.IO;
+    using OpenIIoT.SDK.Common;
+    using OpenIIoT.SDK.Packaging.Manifest;
+    using OpenIIoT.SDK.Packaging.Operations;
+    using Utility.CommandLine;
+
     /// <summary>
     ///     The main Application class.
     /// </summary>
@@ -141,6 +142,7 @@ namespace OpenIIoT.Tools.Packager
         ///     arguments can be viewed in the <see cref="HelpPrinter"/> class, or via the command line by specifying the "help" command.
         /// </remarks>
         /// <param name="args">Command line arguments.</param>
+        [ExcludeFromCodeCoverage]
         public static void Main(string[] args)
         {
             Arguments.Populate();

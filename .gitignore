@@ -212,3 +212,6 @@ ModelManifest.xml
 
 # OpenCover analysis results
 OpenCover/
+
+# AxoCover
+.axoCover/*

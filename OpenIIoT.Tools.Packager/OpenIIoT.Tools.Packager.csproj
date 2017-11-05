@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OpenIIoT.Tools.Packager</RootNamespace>
     <AssemblyName>opkg</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -47,9 +48,8 @@
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="OpenIIoT.SDK.Packaging, Version=0.9.4.28915, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenIIoT.SDK.Packaging.0.9.4.28915\lib\OpenIIoT.SDK.Packaging.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="OpenIIoT.SDK">
+      <HintPath>..\..\OpenIIoT.Core\OpenIIoT.SDK\bin\Debug\OpenIIoT.SDK.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
