@@ -7,6 +7,9 @@
 
 Creates and manages Package files for the OpenIIoT platform.
 
+Note that this tool depends on the ```OpenIIoT.SDK``` binary, and because this binary is still under development and has not yet been added to NuGet, the ```OpenIIoT.Core``` solution
+will need to be cloned, built, and referenced in order for this tool to build properly.
+
 ## Commands 
 
 View a list of available commands by executing the application with no parameters, or with ```help```.
